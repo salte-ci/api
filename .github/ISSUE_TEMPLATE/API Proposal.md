@@ -1,6 +1,11 @@
-Propose a new endpoint for Salte CI!
+---
+name: API Proposal
+about: Propose a new endpoint for Salte CI!
+title: ''
+labels: api%20proposal
+assignees: ''
 
-<!--- Provide a general summary of the issue in the Title above -->
+ ---
 
 ### Description
 
