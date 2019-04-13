@@ -1,0 +1,32 @@
+{
+  "name": "@salte-ci/api",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "nps"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salte-ci/api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/salte-ci/api/issues"
+  },
+  "homepage": "https://github.com/salte-ci/api#readme",
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/node": "^11.13.4",
+    "@typescript-eslint/eslint-plugin": "^1.6.0",
+    "@typescript-eslint/parser": "^1.6.0",
+    "eslint": "^5.16.0",
+    "nps": "^5.9.5",
+    "sqlite3": "^4.0.6",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.3"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "sequelize": "^5.3.5"
+  }
+}
