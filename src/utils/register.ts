@@ -28,14 +28,11 @@ export function wrap(method: (options: Options) => Promise<any>): RequestHandler
 
 export function register(route: RouteInterface<any>) {
   const router = Router();
-  const methods = Router();
 
-  if (route.get) methods.get('/:id?', wrap(route.get));
-  if (route.post) methods.post('/', wrap(route.post));
-  if (route.put) methods.put('/:id?', wrap(route.put));
-  if (route.delete) methods.delete('/:id?', wrap(route.delete));
-
-  router.use(route.route, methods);
+  if (route.get) router.get(`${route.route}/:id?`, wrap(route.get));
+  if (route.post) router.post(route.route, wrap(route.post));
+  if (route.put) router.put(`${route.route}/:id?`, wrap(route.put));
+  if (route.delete) router.delete(`${route.route}/:id?`, wrap(route.delete));
 
   return router;
 }

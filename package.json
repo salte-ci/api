@@ -14,22 +14,57 @@
     "url": "https://github.com/salte-ci/api/issues"
   },
   "homepage": "https://github.com/salte-ci/api#readme",
-  "devDependencies": {
+  "dependencies": {
     "@types/express": "^4.16.1",
     "@types/node": "^11.13.4",
-    "@typescript-eslint/eslint-plugin": "^1.6.0",
-    "@typescript-eslint/parser": "^1.6.0",
-    "eslint": "^5.16.0",
-    "nps": "^5.9.5",
-    "reflect-metadata": "^0.1.13",
+    "express": "^4.16.4",
     "sequelize": "^5.3.5",
     "sequelize-typescript": "^1.0.0-alpha.9",
-    "sqlite3": "^4.0.6",
-    "ts-node": "^8.0.3",
+    "winston": "^3.2.1",
     "typescript": "^3.4.3",
-    "winston": "^3.2.1"
+    "ts-node": "^8.0.3",
+    "nps": "^5.9.5"
   },
-  "dependencies": {
-    "express": "^4.16.4"
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "@types/sinon": "^7.0.11",
+    "@typescript-eslint/eslint-plugin": "^1.6.0",
+    "@typescript-eslint/parser": "^1.6.0",
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.0.0",
+    "sinon": "^7.3.2",
+    "source-map-support": "^0.5.12",
+    "sqlite3": "^4.0.6",
+    "ts-mocha": "^6.0.0"
+  },
+  "mocha": {
+    "spec": [
+      "src/**/*.spec.ts"
+    ],
+    "require": [
+      "source-map-support/register",
+      "ts-node/register"
+    ]
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.spec.ts",
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "all": true
   }
 }
