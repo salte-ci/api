@@ -1,15 +1,5 @@
 import { Router, RequestHandler } from 'express';
-import { RouteInterface } from '../routes/interface';
-
-export interface Options {
-  body: {
-    [key: string]: any;
-  };
-
-  params: {
-    [key: string]: string | number | boolean;
-  };
-}
+import { HttpInterface, Options } from '../routes/interface';
 
 export function wrap(method: (options: Options) => Promise<any>): RequestHandler {
   return async (request, response, next) => {
@@ -26,7 +16,7 @@ export function wrap(method: (options: Options) => Promise<any>): RequestHandler
   }
 };
 
-export function register(route: RouteInterface<any>) {
+export function rest(route: HttpInterface<any>) {
   const router = Router();
 
   if (route.get) router.get(`${route.route}/:id?`, wrap(route.get));

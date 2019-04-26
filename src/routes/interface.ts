@@ -1,19 +1,28 @@
-export interface Options<T> {
-  body: {
-    [key: string]: T;
-  };
-
+export interface Options {
+  body: any;
   params: {
     [key: string]: any;
   };
 }
 
-export interface RouteInterface<T> {
+export interface PostOptions<T> extends Options {
+  body: T;
+}
+
+export interface PutOptions<T> extends Options {
+  body: Partial<T>;
+}
+
+export interface DeleteOptions extends Options {
+  body: number;
+}
+
+export interface HttpInterface<T> {
   route: string;
-  get?(options: Options<T>): Promise<T>;
-  post?(options: Options<T>): Promise<T>;
-  put?(options: Options<T>): Promise<T>;
-  delete?(options: Options<T>): Promise<void>;
+  get?(options: Options): Promise<T>;
+  post?(options: PostOptions<T>): Promise<T>;
+  put?(options: PutOptions<T>): Promise<T>;
+  delete?(options: DeleteOptions): Promise<void>;
 }
 
 export class RouteError extends Error {

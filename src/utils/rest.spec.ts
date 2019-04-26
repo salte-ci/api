@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { wrap, register } from './register';
-import { RouteInterface } from '../routes/interface';
+import { wrap, rest } from './rest';
+import { HttpInterface } from '../routes/interface';
 
 describe('Register', () => {
   describe('function(wrap)', () => {
@@ -47,9 +47,9 @@ describe('Register', () => {
     });
   });
 
-  describe('function(register)', () => {
+  describe('function(rest)', () => {
     it('should register the methods defined', () => {
-      class CustomRoute implements RouteInterface<any> {
+      class CustomRoute implements HttpInterface<any> {
         public route = '/custom';
 
         public async get() {
@@ -73,7 +73,7 @@ describe('Register', () => {
         public async delete() {}
       }
 
-      const router = register(new CustomRoute());
+      const router = rest(new CustomRoute());
 
       expect(router.stack.length).to.equal(4);
       const [get, post, put, del] = router.stack;
@@ -86,11 +86,11 @@ describe('Register', () => {
     });
 
     it('should registering no methods', () => {
-      class CustomRoute implements RouteInterface<any> {
+      class CustomRoute implements HttpInterface<any> {
         public route = '/custom';
       }
 
-      const router = register(new CustomRoute());
+      const router = rest(new CustomRoute());
 
       expect(router.stack.length).to.equal(0);
     });

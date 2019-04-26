@@ -1,14 +1,14 @@
-import { RouteInterface, Options, RouteError } from './interface';
+import { HttpInterface, Options, RouteError } from './interface';
 import { LinkModel } from '../models/database';
 
 export interface Link {
   status: string;
 };
 
-export class LinkRoute implements RouteInterface<Link> {
+export class LinkRoute implements HttpInterface<Link> {
   public route = '/link';
 
-  public async get({ params }: Options<Link>) {
+  public async get({ params }: Options) {
     if (params.id === undefined) {
       return LinkModel.findAll();
     }
