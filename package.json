@@ -39,6 +39,7 @@
     "eslint": "^5.16.0",
     "mocha": "^6.1.4",
     "nyc": "^14.0.0",
+    "outdent": "^0.7.0",
     "sinon": "^7.3.2",
     "source-map-support": "^0.5.12",
     "sqlite3": "^4.0.8",

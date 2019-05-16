@@ -3,6 +3,7 @@ import { config } from '../shared/config';
 import { logger } from '../shared/logger';
 
 import { LinkModel } from './link';
+import { ProviderModel } from './provider';
 import { AccountModel } from './account';
 
 const sequelize = new Sequelize(config.DATABASE_URL, {
@@ -16,7 +17,8 @@ const sequelize = new Sequelize(config.DATABASE_URL, {
 
 sequelize.addModels([
   AccountModel,
-  LinkModel
+  LinkModel,
+  ProviderModel
 ]);
 
 let setup = false;
@@ -30,6 +32,7 @@ export async function database() {
   return {
     sequelize,
     AccountModel,
-    LinkModel
+    LinkModel,
+    ProviderModel
   };
 }
