@@ -10,9 +10,13 @@ const sequelize = new Sequelize(config.DATABASE_URL, {
 
 sequelize.addModels([LinkModel]);
 
-(async () => {
-  await sequelize.sync();
-  await sequelize.authenticate();
-})();
+let setup = false;
+export async function database() {
+  if (!setup) {
+    setup = true;
+    await sequelize.sync();
+    await sequelize.authenticate();
+  }
 
-export { sequelize, LinkModel };
+  return { sequelize, LinkModel };
+}
