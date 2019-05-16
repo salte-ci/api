@@ -5,6 +5,11 @@ import { logger } from '../shared/logger';
 import { LinkModel } from './link';
 
 const sequelize = new Sequelize(config.DATABASE_URL, {
+  define: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  },
+
   logging: (...args) => logger.silly(...args)
 });
 
