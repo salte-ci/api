@@ -18,7 +18,11 @@ export class SocketError extends Error {
   public code: string;
   public statusCode: number;
 
-  constructor(options: { message: string, code: string, statusCode: number }) {
+  constructor(options: {
+    message: string;
+    code: string;
+    statusCode: number;
+  }) {
     super(options.message);
     this.code = options.code;
     this.statusCode = options.statusCode;

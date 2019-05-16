@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { database } from './database';
 
- describe('UserModel', () => {
+describe('UserModel', () => {
   it('should create a user account', async () => {
     const { AccountModel, UserModel } = await database();
 
@@ -18,7 +18,7 @@ import { database } from './database';
     expect(user.created_at).to.be.an.instanceOf(Date);
   });
 
-   it('should ensure an account exists for a given user account', async () => {
+  it('should ensure an account exists for a given user account', async () => {
     const { UserModel } = await database();
 
     const error = await UserModel.create({

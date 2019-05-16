@@ -37,6 +37,8 @@
     "ajv": "^6.10.0",
     "chai": "^4.2.0",
     "eslint": "^5.16.0",
+    "husky": "^2.3.0",
+    "lint-staged": "^8.1.7",
     "mocha": "^6.1.4",
     "nyc": "^14.0.0",
     "outdent": "^0.7.0",
@@ -71,5 +73,16 @@
       "text"
     ],
     "all": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { outdent } from 'outdent';
 import { database } from './database';
 
- describe('ProviderModel', () => {
+describe('ProviderModel', () => {
   beforeEach(async () => {
     const { sequelize } = await database();
     await sequelize.sync({ force: true });

@@ -1,4 +1,4 @@
-import { SocketInterface, Options, SocketError } from './interface';
+import { SocketInterface } from './interface';
 
 export interface Link {
   status: string;
