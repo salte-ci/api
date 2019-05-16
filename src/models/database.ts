@@ -6,6 +6,7 @@ import { AccountModel } from './account';
 import { LinkModel } from './link';
 import { LinkedAccountModel } from './linked-account';
 import { ProviderModel } from './provider';
+import { UserModel } from './user';
 
 const sequelize = new Sequelize(config.DATABASE_URL, {
   typeValidation: true,
@@ -21,7 +22,8 @@ sequelize.addModels([
   AccountModel,
   LinkModel,
   LinkedAccountModel,
-  ProviderModel
+  ProviderModel,
+  UserModel
 ]);
 
 let setup = false;
@@ -37,6 +39,7 @@ export async function database() {
     AccountModel,
     LinkModel,
     LinkedAccountModel,
-    ProviderModel
+    ProviderModel,
+    UserModel
   };
 }
