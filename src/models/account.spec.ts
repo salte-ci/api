@@ -2,6 +2,11 @@ import { expect } from 'chai';
 import { database } from './database';
 
 describe('AccountModel', () => {
+  beforeEach(async () => {
+    const { sequelize } = await database();
+    await sequelize.sync({ force: true });
+  });
+
   it('should create an account', async () => {
     const { AccountModel } = await database();
 

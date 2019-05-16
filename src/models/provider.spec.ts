@@ -3,6 +3,11 @@ import { outdent } from 'outdent';
 import { database } from './database';
 
  describe('ProviderModel', () => {
+  beforeEach(async () => {
+    const { sequelize } = await database();
+    await sequelize.sync({ force: true });
+  });
+
   it('should create a provider', async () => {
     const { ProviderModel } = await database();
 
@@ -43,6 +48,6 @@ import { database } from './database';
     }).catch((error: Error) => error);
 
     expect(error).to.be.an.instanceOf(Error);
-    expect(error.message).to.equal('Validation error');
+    expect(error.message).to.equal('"my-custom-git-provider" is not a valid choice in ["bitbucket","github","gitlab"]');
   });
 });

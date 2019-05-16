@@ -23,7 +23,7 @@ export class ProviderModel extends Model<ProviderModel> {
   friendly_name: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
     values: ['bitbucket', 'github', 'gitlab']
   })
