@@ -3,6 +3,7 @@ import { config } from '../shared/config';
 import { logger } from '../shared/logger';
 
 import { LinkModel } from './link';
+import { AccountModel } from './account';
 
 const sequelize = new Sequelize(config.DATABASE_URL, {
   define: {
@@ -13,7 +14,10 @@ const sequelize = new Sequelize(config.DATABASE_URL, {
   logging: (...args) => logger.silly(...args)
 });
 
-sequelize.addModels([LinkModel]);
+sequelize.addModels([
+  AccountModel,
+  LinkModel
+]);
 
 let setup = false;
 export async function database() {
@@ -23,5 +27,9 @@ export async function database() {
     await sequelize.authenticate();
   }
 
-  return { sequelize, LinkModel };
+  return {
+    sequelize,
+    AccountModel,
+    LinkModel
+  };
 }
