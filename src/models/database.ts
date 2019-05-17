@@ -8,6 +8,7 @@ import { EnvironmentVariableModel } from './environment-variable';
 import { LinkModel } from './link';
 import { LinkedAccountModel } from './linked-account';
 import { ProviderModel } from './provider';
+import { RunnerModel } from './runner';
 import { RepoModel } from './repo';
 import { UserModel } from './user';
 
@@ -28,6 +29,7 @@ sequelize.addModels([
   LinkModel,
   LinkedAccountModel,
   ProviderModel,
+  RunnerModel,
   RepoModel,
   UserModel
 ]);
@@ -48,6 +50,7 @@ export async function database() {
     LinkModel,
     LinkedAccountModel,
     ProviderModel,
+    RunnerModel,
     RepoModel,
     UserModel
   };
