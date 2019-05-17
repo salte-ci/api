@@ -4,6 +4,7 @@ import { logger } from '../shared/logger';
 
 import { AccountModel } from './account';
 import { BotModel } from './bot';
+import { EnvironmentVariableModel } from './environment-variable';
 import { LinkModel } from './link';
 import { LinkedAccountModel } from './linked-account';
 import { ProviderModel } from './provider';
@@ -22,6 +23,7 @@ const sequelize = new Sequelize(config.DATABASE_URL, {
 sequelize.addModels([
   AccountModel,
   BotModel,
+  EnvironmentVariableModel,
   LinkModel,
   LinkedAccountModel,
   ProviderModel,
@@ -40,6 +42,7 @@ export async function database() {
     sequelize,
     AccountModel,
     BotModel,
+    EnvironmentVariableModel,
     LinkModel,
     LinkedAccountModel,
     ProviderModel,
