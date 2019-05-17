@@ -34,6 +34,6 @@ describe('BotModel', () => {
     }).catch((error: Error) => error);
 
     expect(error).to.be.an.instanceOf(Error);
-    expect(error.message).to.equal('Validation error');
+    expect(error.message).to.equal('SQLITE_CONSTRAINT: FOREIGN KEY constraint failed');
   });
 });
