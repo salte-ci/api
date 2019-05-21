@@ -3,7 +3,6 @@ import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import * as nock from 'nock';
 
-import { config } from '../shared/config';
 import { GitHubProvider } from './github';
 
 chai.use(sinonChai);

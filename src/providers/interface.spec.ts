@@ -1,6 +1,4 @@
-import * as sinon from 'sinon';
 import { expect } from 'chai';
-import * as sinonChai from 'sinon-chai';
 
 import { Provider } from './interface';
 

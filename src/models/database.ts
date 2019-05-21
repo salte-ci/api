@@ -40,39 +40,15 @@ export async function database() {
     await sequelize.authenticate();
   }
 
-  if (config.DEFAULT_GITHUB_PROVIDER) {
+  for (const provider of config.DEFAULT_PROVIDERS) {
     await ProviderModel.upsert({
-      name: 'github',
-      friendly_name: 'GitHub',
-      type: 'github',
-      url: 'https://github.com',
-      api_url: 'https://api.github.com',
-      client_id: config.DEFAULT_GITHUB_PROVIDER.CLIENT_ID,
-      client_secret: config.DEFAULT_GITHUB_PROVIDER.CLIENT_SECRET
-    });
-  }
-
-  if (config.DEFAULT_BITBUCKET_PROVIDER) {
-    await ProviderModel.upsert({
-      name: 'bitbucket',
-      friendly_name: 'Bitbucket',
-      type: 'bitbucket',
-      url: 'https://bitbucket.org',
-      api_url: 'https://api.bitbucket.org',
-      client_id: config.DEFAULT_BITBUCKET_PROVIDER.CLIENT_ID,
-      client_secret: config.DEFAULT_BITBUCKET_PROVIDER.CLIENT_SECRET
-    });
-  }
-
-  if (config.DEFAULT_GITLAB_PROVIDER) {
-    await ProviderModel.upsert({
-      name: 'gitlab',
-      friendly_name: 'GitLab',
-      type: 'gitlab',
-      url: 'https://gitlab.com',
-      api_url: 'https://gitlab.com',
-      client_id: config.DEFAULT_GITLAB_PROVIDER.CLIENT_ID,
-      client_secret: config.DEFAULT_GITLAB_PROVIDER.CLIENT_SECRET
+      name: provider.name,
+      friendly_name: provider.friendly_name,
+      type: provider.type,
+      url: provider.url,
+      api_url: provider.api_url,
+      client_id: provider.client_id,
+      client_secret: provider.client_secret
     });
   }
 

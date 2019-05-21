@@ -11,7 +11,7 @@ describe('LinkRoute', () => {
   let provider: any;
 
   beforeEach(async () => {
-    const { AccountModel, ProviderModel, LinkedAccountModel, sequelize } = await database();
+    const { AccountModel, ProviderModel, sequelize } = await database();
     await sequelize.sync({ force: true });
 
     account = await AccountModel.create({
