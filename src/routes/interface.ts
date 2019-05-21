@@ -3,6 +3,7 @@ export interface Options {
   params: {
     [key: string]: any;
   };
+  auth: any;
 }
 
 export interface PostOptions<T> extends Options {
@@ -27,15 +28,15 @@ export interface HttpInterface<T> {
 
 export class RouteError extends Error {
   public code: string;
-  public statusCode: number;
+  public status: number;
 
   constructor(options: {
     message: string;
     code: string;
-    statusCode: number;
+    status: number;
   }) {
     super(options.message);
     this.code = options.code;
-    this.statusCode = options.statusCode;
+    this.status = options.status;
   }
 }

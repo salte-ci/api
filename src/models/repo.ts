@@ -14,7 +14,7 @@ export class RepoModel extends Model<RepoModel> {
   @ForeignKey(() => ProviderModel)
   provider_id: string;
 
-  @BelongsTo(() => ProviderModel, 'id')
+  @BelongsTo(() => ProviderModel, 'provider_id')
   provider: ProviderModel;
 
   @Column({

@@ -18,17 +18,17 @@ export class LinkedAccountModel extends Model<LinkedAccountModel> {
   account_id: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     primaryKey: true
   })
   @ForeignKey(() => ProviderModel)
-  provider_id: string;
+  provider_id: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false
   })
-  code: string;
+  access_token: string;
 
   @Column(DataType.STRING)
   refresh_token: string;

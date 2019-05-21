@@ -5,7 +5,6 @@ import { logger } from '../shared/logger';
 import { AccountModel } from './account';
 import { BotModel } from './bot';
 import { EnvironmentVariableModel } from './environment-variable';
-import { LinkModel } from './link';
 import { LinkedAccountModel } from './linked-account';
 import { ProviderModel } from './provider';
 import { RunnerModel } from './runner';
@@ -26,7 +25,6 @@ sequelize.addModels([
   AccountModel,
   BotModel,
   EnvironmentVariableModel,
-  LinkModel,
   LinkedAccountModel,
   ProviderModel,
   RunnerModel,
@@ -42,12 +40,47 @@ export async function database() {
     await sequelize.authenticate();
   }
 
+  if (config.DEFAULT_GITHUB_PROVIDER) {
+    await ProviderModel.upsert({
+      name: 'github',
+      friendly_name: 'GitHub',
+      type: 'github',
+      url: 'https://github.com',
+      api_url: 'https://api.github.com',
+      client_id: config.DEFAULT_GITHUB_PROVIDER.CLIENT_ID,
+      client_secret: config.DEFAULT_GITHUB_PROVIDER.CLIENT_SECRET
+    });
+  }
+
+  if (config.DEFAULT_BITBUCKET_PROVIDER) {
+    await ProviderModel.upsert({
+      name: 'bitbucket',
+      friendly_name: 'Bitbucket',
+      type: 'bitbucket',
+      url: 'https://bitbucket.org',
+      api_url: 'https://api.bitbucket.org',
+      client_id: config.DEFAULT_BITBUCKET_PROVIDER.CLIENT_ID,
+      client_secret: config.DEFAULT_BITBUCKET_PROVIDER.CLIENT_SECRET
+    });
+  }
+
+  if (config.DEFAULT_GITLAB_PROVIDER) {
+    await ProviderModel.upsert({
+      name: 'gitlab',
+      friendly_name: 'GitLab',
+      type: 'gitlab',
+      url: 'https://gitlab.com',
+      api_url: 'https://gitlab.com',
+      client_id: config.DEFAULT_GITLAB_PROVIDER.CLIENT_ID,
+      client_secret: config.DEFAULT_GITLAB_PROVIDER.CLIENT_SECRET
+    });
+  }
+
   return {
     sequelize,
     AccountModel,
     BotModel,
     EnvironmentVariableModel,
-    LinkModel,
     LinkedAccountModel,
     ProviderModel,
     RunnerModel,

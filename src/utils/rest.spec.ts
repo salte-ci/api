@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 import { wrap, rest } from './rest';
 import { HttpInterface } from '../routes/interface';
 
@@ -17,7 +18,8 @@ describe('Register', () => {
         },
         params: {
           hallo: 'welt'
-        }
+        },
+        header: sinon.fake()
       }, {
         json: () => ({
           status: () => ({
@@ -39,7 +41,8 @@ describe('Register', () => {
         },
         params: {
           hallo: 'welt'
-        }
+        },
+        header: sinon.fake()
       }, {}, (error: any) => {
         expect(error.message).to.equal('Whoops!');
         done();
@@ -75,10 +78,11 @@ describe('Register', () => {
 
       const router = rest(new CustomRoute());
 
-      expect(router.stack.length).to.equal(4);
-      const [get, post, put, del] = router.stack;
+      expect(router.stack.length).to.equal(5);
+      const [json, get, post, put, del] = router.stack;
 
       expect('/custom').to.match(get.regexp);
+      expect(json.name).to.equal('jsonParser');
       expect(get.route.stack[0].method).to.equal('get');
       expect(post.route.stack[0].method).to.equal('post');
       expect(put.route.stack[0].method).to.equal('put');
@@ -92,7 +96,7 @@ describe('Register', () => {
 
       const router = rest(new CustomRoute());
 
-      expect(router.stack.length).to.equal(0);
+      expect(router.stack.length).to.equal(1);
     });
   });
 });

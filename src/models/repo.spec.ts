@@ -11,9 +11,13 @@ describe('RepoModel', () => {
     const { ProviderModel, RepoModel } = await database();
 
     const provider = await ProviderModel.create({
-      name: 'github',
-      friendly_name: 'GitHub',
-      type: 'github'
+      name: 'enterprise-github',
+      friendly_name: 'Enterprise GitHub',
+      type: 'github',
+      url: 'https://github.com',
+      api_url: 'https://api.github.com',
+      client_id: '12345',
+      client_secret: '54321'
     });
 
     const repo = await RepoModel.create({
@@ -22,7 +26,7 @@ describe('RepoModel', () => {
     });
 
     expect(repo.id).to.equal(1);
-    expect(repo.provider_id).to.equal(1);
+    expect(repo.provider_id).to.equal(4);
     expect(repo.slug).to.equal('salte-ci/ui');
     expect(repo.updated_at).to.be.an.instanceOf(Date);
     expect(repo.created_at).to.be.an.instanceOf(Date);

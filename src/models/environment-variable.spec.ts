@@ -11,9 +11,13 @@ describe('EnvironmentVariableModel', () => {
     const { ProviderModel, EnvironmentVariableModel } = await database();
 
     const provider = await ProviderModel.create({
-      name: 'github',
-      friendly_name: 'GitHub',
-      type: 'github'
+      name: 'enterprise-github',
+      friendly_name: 'Enterprise GitHub',
+      type: 'github',
+      url: 'https://github.com',
+      api_url: 'https://api.github.com',
+      client_id: '12345',
+      client_secret: '54321'
     });
 
     const environmentVariable = await EnvironmentVariableModel.create({
@@ -24,7 +28,7 @@ describe('EnvironmentVariableModel', () => {
       value: '12345'
     });
 
-    expect(environmentVariable.provider_id).to.equal(1);
+    expect(environmentVariable.provider_id).to.equal(4);
     expect(environmentVariable.scope).to.equal('salte-ci/ui');
     expect(environmentVariable.key).to.equal('AWS_ACCESS_KEY');
     expect(environmentVariable.masked).to.equal(true);

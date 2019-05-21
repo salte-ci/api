@@ -11,6 +11,18 @@ export class ProviderModel extends Model<ProviderModel> {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false
+  })
+  client_id: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  client_secret: string;
+
+  @Column({
+    type: DataType.STRING,
     allowNull: false,
     unique: true
   })
@@ -28,4 +40,16 @@ export class ProviderModel extends Model<ProviderModel> {
     values: ['bitbucket', 'github', 'gitlab']
   })
   type: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  url: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  api_url: string;
 }
