@@ -63,7 +63,7 @@ Publish Image:
 .deploy_template: &deploy
   stage: deploy
   image:
-    name: hashicorp/terraform:light
+    name: hashicorp/terraform:0.11.14
     entrypoint: [""]
   script:
     - terraform init

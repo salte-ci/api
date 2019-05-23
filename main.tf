@@ -190,8 +190,6 @@ resource "docker_service" "database" {
 
     networks = ["${docker_network.database.id}"]
 
-    resources {}
-
     restart_policy {
       condition = "any"
       delay     = "5s"
@@ -247,8 +245,6 @@ resource "docker_service" "api" {
         file_name   = "/run/secrets/default_providers"
       }]
     }
-
-    resources {}
 
     restart_policy {
       condition = "any"
