@@ -4,6 +4,7 @@ import * as jwksClient from 'jwks-rsa';
 
 import { database } from '../models/database';
 import { config } from '../shared/config';
+import { fetch } from './fetch';
 
 export interface Auth {
   [key: string]: any;
@@ -43,21 +44,27 @@ export async function auth(request: Request): Promise<Auth | null> {
     });
   });
 
+  const userInfo = await fetch(`${config.ISSUER}userinfo`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
   const { UserModel, AccountModel } = await database();
 
-  const account = await AccountModel.findByPk(decoded.sub);
+  const account = await AccountModel.findByPk(userInfo.sub);
   if (!account) {
     await AccountModel.create({
-      id: decoded.sub
+      id: userInfo.sub
     })
   }
 
-  const user = await UserModel.findByPk(decoded.sub);
+  const user = await UserModel.findByPk(userInfo.sub);
   if (!user) {
     await UserModel.create({
-      id: decoded.sub
+      id: userInfo.sub
     })
   }
 
-  return decoded;
+  return Object.assign({ token }, userInfo);
 }

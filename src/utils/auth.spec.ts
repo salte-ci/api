@@ -1,12 +1,18 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as jwt from 'jsonwebtoken';
+import * as fetch from './fetch';
 import { auth } from './auth';
 import { Base64 } from './convert';
 import { database } from '../models/database';
 
 describe('Auth', () => {
   beforeEach(async () => {
+    sinon.stub(fetch, 'fetch').resolves({
+      sub: '1234567890',
+      name: 'John Doe',
+      exp: 1524168810
+    });
     const { sequelize } = await database();
     await sequelize.sync({ force: true });
   });
@@ -40,21 +46,23 @@ describe('Auth', () => {
 
     it('should parse valid tokens', async () => {
       const { AccountModel, UserModel } = await database();
+      const accessToken = `${Base64.encode(JSON.stringify({
+        kid: 'MTFDREZEMjk3RkU0MzgyMThBNjczQzBERjdGRTc0MjI0MEE5MkI0OA'
+      }))}.${Base64.encode(JSON.stringify({
+        sub: '1234567890',
+        name: 'John Doe',
+        exp: 1524168810
+      }))}.12345`;
 
       const token = await auth({
-        header: sinon.stub().returns(`Bearer ${Base64.encode(JSON.stringify({
-          kid: 'MTFDREZEMjk3RkU0MzgyMThBNjczQzBERjdGRTc0MjI0MEE5MkI0OA'
-        }))}.${Base64.encode(JSON.stringify({
-          sub: '1234567890',
-          name: 'John Doe',
-          exp: 1524168810
-        }))}.12345`)
+        header: sinon.stub().returns(`Bearer ${accessToken}`)
       } as any);
 
       expect(token).to.deep.equal({
         sub: '1234567890',
         name: 'John Doe',
-        exp: 1524168810
+        exp: 1524168810,
+        token: accessToken
       });
       expect(AccountModel.create).to.have.callCount(1);
       expect(UserModel.create).to.have.callCount(1);
