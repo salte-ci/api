@@ -7,6 +7,12 @@ export class LinkRoute implements HttpInterface<LinkedAccountModel> {
   public route = '/links';
 
   public async get({ auth, params }: Options) {
+    if (!auth) throw new RouteError({
+      code: 'unauthorized',
+      message: `Must be authenticated to view linked accounts.`,
+      status: 401
+    });
+
     const { LinkedAccountModel } = await database();
 
     if (params.id) {

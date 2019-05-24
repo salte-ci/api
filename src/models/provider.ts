@@ -1,6 +1,18 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
-@Table({ modelName: 'provider' })
+@Table({
+  modelName: 'provider',
+  defaultScope: {
+    attributes: { exclude: ['client_secret'] }
+  },
+  scopes: {
+    admin: {
+      attributes: {
+        include: ['client_secret']
+      }
+    }
+  }
+})
 export class ProviderModel extends Model<ProviderModel> {
   @Column({
     type: DataType.INTEGER,

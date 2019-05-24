@@ -53,16 +53,15 @@ export async function database() {
     setup = true;
   }
 
-
   return {
     sequelize,
-    AccountModel,
-    BotModel,
-    EnvironmentVariableModel,
-    LinkedAccountModel,
-    ProviderModel,
-    RunnerModel,
-    RepoModel,
-    UserModel
+    AccountModel: AccountModel,
+    BotModel: BotModel,
+    EnvironmentVariableModel: EnvironmentVariableModel,
+    LinkedAccountModel: LinkedAccountModel,
+    ProviderModel: ProviderModel,
+    RunnerModel: RunnerModel,
+    RepoModel: RepoModel,
+    UserModel: UserModel
   };
 }
