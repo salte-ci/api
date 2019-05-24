@@ -26,7 +26,7 @@ describe('RepoModel', () => {
     });
 
     expect(repo.id).to.equal(1);
-    expect(repo.provider_id).to.equal(4);
+    expect(repo.provider_id).to.equal(1);
     expect(repo.slug).to.equal('salte-ci/ui');
     expect(repo.updated_at).to.be.an.instanceOf(Date);
     expect(repo.created_at).to.be.an.instanceOf(Date);

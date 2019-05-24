@@ -21,7 +21,7 @@ describe('ProviderModel', () => {
       client_secret: '54321'
     });
 
-    expect(provider.id).to.equal(4);
+    expect(provider.id).to.equal(1);
     expect(provider.name).to.equal('enterprise-github');
     expect(provider.friendly_name).to.equal('Enterprise GitHub');
     expect(provider.type).to.equal('github');

@@ -28,7 +28,7 @@ describe('EnvironmentVariableModel', () => {
       value: '12345'
     });
 
-    expect(environmentVariable.provider_id).to.equal(4);
+    expect(environmentVariable.provider_id).to.equal(1);
     expect(environmentVariable.scope).to.equal('salte-ci/ui');
     expect(environmentVariable.key).to.equal('AWS_ACCESS_KEY');
     expect(environmentVariable.masked).to.equal(true);
@@ -41,7 +41,7 @@ describe('EnvironmentVariableModel', () => {
     const { EnvironmentVariableModel } = await database();
 
     const error = await EnvironmentVariableModel.create({
-      provider_id: '12345',
+      provider_id: 12345,
       scope: 'salte-ci/ui',
       key: 'AWS_ACCESS_KEY',
       masked: true,

@@ -67,19 +67,11 @@ provider "docker" {
 resource "random_string" "user" {
   length  = 20
   special = false
-
-  keepers {
-    timestamp = "${timestamp()}"
-  }
 }
 
 resource "random_string" "password" {
   length  = 20
   special = false
-
-  keepers {
-    timestamp = "${timestamp()}"
-  }
 }
 
 resource "random_string" "secret_suffix" {
@@ -111,7 +103,7 @@ resource "docker_secret" "mysql_password" {
 
 resource "docker_secret" "database_url" {
   name = "salte_ci_database_url_${local.environment}_${random_string.secret_suffix.result}"
-  data = "${base64encode("mysql://${random_string.user.result}:${random_string.password.result}@${docker_service.database.name}/salte-ci")}"
+  data = "${base64encode("mysql://root:${random_string.password.result}@${docker_service.database.name}/salte-ci")}"
 
   lifecycle {
     create_before_destroy = true
@@ -155,7 +147,6 @@ resource "null_resource" "database_volume" {
   }
 }
 
-
 resource "docker_service" "database" {
   name     = "${local.application}-database"
 
@@ -165,7 +156,7 @@ resource "docker_service" "database" {
 
       env {
         MYSQL_DATABASE           = "salte-ci"
-        MYSQL_USER_FILE          = "/run/secrets/mysql_user"
+        MYSQL_USER               = "salte-ci"
         MYSQL_PASSWORD_FILE      = "/run/secrets/mysql_password"
         MYSQL_ROOT_PASSWORD_FILE = "/run/secrets/mysql_password"
       }

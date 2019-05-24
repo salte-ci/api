@@ -1,4 +1,7 @@
 scripts:
+  default:
+    script: ts-node .
+    description: Starts a server at http://localhost:8081
   lint:
     script: eslint src/**/*.ts
     description: Checks for any formatting errors
@@ -9,9 +12,6 @@ scripts:
     tdd:
       script: nyc mocha -w
       description: Watches for changes and executes the Test Suite accordingly
-  serve:
-    script: ts-node .
-    description: Starts a server at http://localhost:8081
   report-coverage:
     script: coveralls < coverage/lcov.info
     description: Reports code coverage information to Coveralls

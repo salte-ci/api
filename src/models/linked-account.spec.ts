@@ -31,7 +31,7 @@ describe('LinkedAccountModel', () => {
     });
 
     expect(linkedAccount.account_id).to.equal('12345');
-    expect(linkedAccount.provider_id).to.equal(4);
+    expect(linkedAccount.provider_id).to.equal(1);
     expect(linkedAccount.access_token).to.equal('54321');
     expect(linkedAccount.updated_at).to.be.an.instanceOf(Date);
     expect(linkedAccount.created_at).to.be.an.instanceOf(Date);

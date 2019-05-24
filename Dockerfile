@@ -4,4 +4,4 @@ WORKDIR /build
 COPY . /build
 
 EXPOSE 8080
-CMD ["npm", "start", "serve"]
+CMD ["npm", "start"]

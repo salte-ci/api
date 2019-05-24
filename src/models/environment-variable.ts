@@ -4,11 +4,11 @@ import { ProviderModel } from './provider';
 @Table({ modelName: 'environment_variable' })
 export class EnvironmentVariableModel extends Model<EnvironmentVariableModel> {
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     primaryKey: true
   })
   @ForeignKey(() => ProviderModel)
-  provider_id: string;
+  provider_id: number;
 
   @BelongsTo(() => ProviderModel, 'provider_id')
   provider: ProviderModel;

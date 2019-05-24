@@ -35,22 +35,24 @@ sequelize.addModels([
 let setup = false;
 export async function database() {
   if (!setup) {
-    setup = true;
     await sequelize.sync();
     await sequelize.authenticate();
+
+    for (const provider of config.DEFAULT_PROVIDERS) {
+      await ProviderModel.upsert({
+        name: provider.name,
+        friendly_name: provider.friendly_name,
+        type: provider.type,
+        url: provider.url,
+        api_url: provider.api_url,
+        client_id: provider.client_id,
+        client_secret: provider.client_secret
+      });
+    }
+
+    setup = true;
   }
 
-  for (const provider of config.DEFAULT_PROVIDERS) {
-    await ProviderModel.upsert({
-      name: provider.name,
-      friendly_name: provider.friendly_name,
-      type: provider.type,
-      url: provider.url,
-      api_url: provider.api_url,
-      client_id: provider.client_id,
-      client_secret: provider.client_secret
-    });
-  }
 
   return {
     sequelize,
