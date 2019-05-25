@@ -28,7 +28,7 @@ export async function auth(request: Request): Promise<Auth | null> {
     jwksUri: config.JWKS_URL
   });
 
-  const decoded: Auth = await new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     jwt.verify(token, (header: jwt.JwtHeader, callback) => {
       if (!header.kid) throw new Error(`Invalid kid in token.`);
 

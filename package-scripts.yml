@@ -7,10 +7,10 @@ scripts:
     description: Checks for any formatting errors
   test:
     default:
-      script: nyc mocha
+      script: cross-env LOG_LEVEL=none ENVIRONMENT=CI nyc mocha
       description: Executes the Test Suite
     tdd:
-      script: nyc mocha -w
+      script: cross-env LOG_LEVEL=none ENVIRONMENT=CI nyc mocha -w
       description: Watches for changes and executes the Test Suite accordingly
   report-coverage:
     script: coveralls < coverage/lcov.info

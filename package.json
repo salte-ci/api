@@ -16,6 +16,7 @@
   "homepage": "https://github.com/salte-ci/api#readme",
   "dependencies": {
     "@octokit/rest": "^16.26.0",
+    "@overnightjs/core": "^1.5.5",
     "@types/express": "^4.16.1",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/nock": "^10.0.3",
@@ -27,6 +28,7 @@
     "bitbucket": "^1.15.0",
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
+    "express-promise-router": "^3.0.3",
     "gitlab": "^4.5.1",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.5.0",
@@ -47,9 +49,11 @@
     "@types/mocha": "^5.2.6",
     "@types/sinon": "^7.0.11",
     "@types/sinon-chai": "^3.2.2",
+    "@types/supertest": "^2.0.7",
     "@typescript-eslint/eslint-plugin": "^1.6.0",
     "@typescript-eslint/parser": "^1.6.0",
     "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
     "husky": "^2.3.0",
     "lint-staged": "^8.1.7",
@@ -61,6 +65,7 @@
     "sinon-chai": "^3.3.0",
     "source-map-support": "^0.5.12",
     "sqlite3": "^4.0.8",
+    "supertest": "^4.0.2",
     "ts-mocha": "^6.0.0"
   },
   "mocha": {
