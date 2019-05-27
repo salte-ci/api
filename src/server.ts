@@ -24,11 +24,7 @@ export class ExpressServer extends OvernightServer {
       }
     });
 
-    this.addControllers(Object.values(Controllers).map((Controller) => new Controller()), () => {
-      return PromiseRouter({
-        mergeParams: true
-      });
-    });
+    this.addControllers(Object.values(Controllers).map((Controller) => new Controller()), PromiseRouter);
 
     this.app.use((error: any, _request: Request, response: Response, _next: NextFunction) => {
       logger.error(error);

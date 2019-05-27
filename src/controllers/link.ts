@@ -1,4 +1,4 @@
-import { Controller, Post, Get } from '@overnightjs/core';
+import { Controller, ClassOptions, Post, Get } from '@overnightjs/core';
 import { Request, Response, RouteError } from './interface';
 import { database } from '../models/database';
 import { ProviderModel } from '../models/provider';
@@ -6,6 +6,9 @@ import { providers } from '../providers';
 import { logger } from '../shared/logger';
 
 @Controller('links/:provider_name?')
+@ClassOptions({
+  mergeParams: true
+})
 export class LinkController {
 
   @Get('/')

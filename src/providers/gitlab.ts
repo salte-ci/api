@@ -1,5 +1,5 @@
 import * as request from 'superagent';
-import GitLab from 'gitlab';
+import { Gitlab } from 'gitlab';
 
 import { Provider } from './interface';
 import { config } from '../shared/config';
@@ -9,7 +9,7 @@ export class GitLabProvider extends Provider {
 
   constructor(url: string, token: string) {
     super();
-    this.gitlab = new GitLab({
+    this.gitlab = new Gitlab({
       url,
       oauthToken: token
     });
