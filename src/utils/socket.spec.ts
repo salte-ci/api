@@ -1,9 +1,19 @@
 import { Server } from 'http';
+import * as getPort from 'get-port';
 import { expect } from 'chai';
 import * as WebSocket from 'ws';
-import { config } from '../shared/config';
 import { socket } from './socket';
 import { SocketInterface } from '../sockets/interface';
+
+function listen(server: Server, port: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      server.listen(port, () => resolve());
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 function close(server?: Server | WebSocket.Server): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -34,11 +44,13 @@ function send(socket: WebSocket, data: any, cb: (message: string) => void): Prom
 }
 
 describe('Register', () => {
+  let port: number;
   let server: Server;
   let wss: WebSocket.Server;
-  beforeEach((done) => {
+  beforeEach(async () => {
+    port = await getPort();
     server = new Server();
-    server.listen(config.PORT, done);
+    await listen(server, port);
   });
 
   afterEach(async () => {
@@ -60,7 +72,7 @@ describe('Register', () => {
 
       wss = socket(server, new CustomRoute());
 
-      const ws = new WebSocket(`ws://localhost:${config.PORT}/custom`);
+      const ws = new WebSocket(`ws://localhost:${port}/custom`);
 
       await open(ws);
       await send(ws, JSON.stringify(['basic']), (message: string) => {
@@ -80,7 +92,7 @@ describe('Register', () => {
 
       wss = socket(server, new CustomRoute());
 
-      const ws = new WebSocket(`ws://localhost:${config.PORT}/custom`);
+      const ws = new WebSocket(`ws://localhost:${port}/custom`);
 
       await open(ws);
       await send(ws, JSON.stringify(['basic']), (message) => {
@@ -109,7 +121,7 @@ describe('Register', () => {
 
       wss = socket(server, new CustomRoute());
 
-      const ws = new WebSocket(`ws://localhost:${config.PORT}/custom`);
+      const ws = new WebSocket(`ws://localhost:${port}/custom`);
 
       await open(ws);
       await send(ws, JSON.stringify(['basic']), (message) => {
