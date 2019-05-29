@@ -16,8 +16,8 @@ describe('EnvironmentVariableModel', () => {
       type: 'github',
       url: 'https://github.com',
       api_url: 'https://api.github.com',
-      client_id: '12345',
-      client_secret: '54321'
+      client_id: 'client_id',
+      client_secret: 'client_secret'
     });
 
     const environmentVariable = await EnvironmentVariableModel.create({

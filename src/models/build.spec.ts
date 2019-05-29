@@ -16,13 +16,14 @@ describe('BuildModel', () => {
       type: 'github',
       url: 'https://github.com',
       api_url: 'https://api.github.com',
-      client_id: '12345',
-      client_secret: '54321'
+      client_id: 'client_id',
+      client_secret: 'client_secret'
     });
 
     const repo = await RepoModel.create({
       provider_id: provider.id,
-      slug: 'salte-ci/ui'
+      slug: 'salte-ci/ui',
+      private: false
     });
 
     const build = await BuildModel.create({

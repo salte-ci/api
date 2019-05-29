@@ -5,7 +5,7 @@ export async function fetch(url: RequestInfo, init?: RequestInit) {
   const response = await nodeFetch(url, init);
 
   const contentType = response.headers.get('content-type');
-  const responseBody = contentType && contentType.includes('application/json') ? response.json() : response.text();
+  const responseBody = await (contentType && contentType.includes('application/json') ? response.json() : response.text());
 
   return response.status >= 400 ? Promise.reject(responseBody) : responseBody;
 }

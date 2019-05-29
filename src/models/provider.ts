@@ -1,4 +1,7 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { LinkedAccountModel } from './linked-account';
+import { EnvironmentVariableModel } from './environment-variable';
+import { RepoModel } from './repo';
 
 @Table({
   modelName: 'provider',
@@ -14,6 +17,15 @@ import { Table, Column, Model, DataType } from 'sequelize-typescript';
   }
 })
 export class ProviderModel extends Model<ProviderModel> {
+  @HasMany(() => LinkedAccountModel, 'provider_id')
+  linkedAccounts: LinkedAccountModel[];
+
+  @HasMany(() => EnvironmentVariableModel, 'provider_id')
+  environmentVariables: EnvironmentVariableModel[];
+
+  @HasMany(() => RepoModel, 'provider_id')
+  repos: RepoModel[];
+
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,

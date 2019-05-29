@@ -17,21 +17,21 @@ describe('ProviderModel', () => {
       type: 'github',
       url: 'https://github.com',
       api_url: 'https://api.github.com',
-      client_id: '12345',
-      client_secret: '54321'
+      client_id: 'client_id',
+      client_secret: 'client_secret'
     });
 
     expect(provider.id).to.equal(1);
     expect(provider.name).to.equal('enterprise-github');
     expect(provider.friendly_name).to.equal('Enterprise GitHub');
     expect(provider.type).to.equal('github');
-    expect(provider.client_id).to.equal('12345');
-    expect(provider.client_secret).to.equal('54321');
+    expect(provider.client_id).to.equal('client_id');
+    expect(provider.client_secret).to.equal('client_secret');
     expect(provider.updated_at).to.be.an.instanceOf(Date);
     expect(provider.created_at).to.be.an.instanceOf(Date);
   });
 
-  it('should throw an error if a name, friendly_name, or type are not provided', async () => {
+  it('should throw an error if a client_id, client_secret, name, friendly_name, type, url, or api_url are not provided', async () => {
     const { ProviderModel } = await database();
 
     const error = await ProviderModel.create().catch((error: Error) => error);
@@ -57,8 +57,8 @@ describe('ProviderModel', () => {
       type: 'my-custom-git-provider',
       url: 'https://github.com',
       api_url: 'https://api.github.com',
-      client_id: '12345',
-      client_secret: '54321'
+      client_id: 'client_id',
+      client_secret: 'client_secret'
     }).catch((error: Error) => error);
 
     expect(error).to.be.an.instanceOf(Error);

@@ -1,15 +1,9 @@
-import { Table, BelongsTo, Column, ForeignKey, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, ForeignKey, Model, DataType, BelongsTo } from 'sequelize-typescript';
 import { AccountModel } from './account';
 import { ProviderModel } from './provider';
 
 @Table({ modelName: 'linked_account' })
 export class LinkedAccountModel extends Model<LinkedAccountModel> {
-  @BelongsTo(() => AccountModel, 'account_id')
-  account: AccountModel;
-
-  @BelongsTo(() => ProviderModel, 'provider_id')
-  provider: ProviderModel;
-
   @Column({
     type: DataType.STRING,
     primaryKey: true
@@ -17,12 +11,18 @@ export class LinkedAccountModel extends Model<LinkedAccountModel> {
   @ForeignKey(() => AccountModel)
   account_id: string;
 
+  @BelongsTo(() => AccountModel)
+  account: AccountModel;
+
   @Column({
     type: DataType.INTEGER,
     primaryKey: true
   })
   @ForeignKey(() => ProviderModel)
   provider_id: number;
+
+  @BelongsTo(() => ProviderModel)
+  provider: ProviderModel;
 
   @Column({
     type: DataType.STRING,

@@ -1,5 +1,4 @@
-import { Table, BelongsTo, Column, ForeignKey, Model, DataType } from 'sequelize-typescript';
-import { RepoModel } from './repo';
+import { Table, Column, ForeignKey, Model, DataType } from 'sequelize-typescript';
 
 @Table({ modelName: 'build' })
 export class BuildModel extends Model<BuildModel> {
@@ -9,14 +8,4 @@ export class BuildModel extends Model<BuildModel> {
     autoIncrement: true
   })
   id: string;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false
-  })
-  @ForeignKey(() => RepoModel)
-  repo_id: string;
-
-  @BelongsTo(() => RepoModel, 'repo_id')
-  repo: RepoModel;
 }
