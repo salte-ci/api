@@ -32,8 +32,22 @@ export async function auth(request: Request): Promise<Auth | null> {
     jwt.verify(token, (header: jwt.JwtHeader, callback) => {
       if (!header.kid) throw new Error(`Invalid kid in token.`);
 
-      client.getSigningKey(header.kid, (error: Error, key: jwksClient.Jwk) => {
-        callback(error, key.publicKey || key.rsaPublicKey);
+      client.getSigningKey(header.kid, (error: Error | null, key: jwksClient.SigningKey) => {
+        function isRSA(key: jwksClient.SigningKey): key is jwksClient.RsaSigningKey {
+          return !!(key as jwksClient.RsaSigningKey).rsaPublicKey;
+        }
+
+        function isCert(key: jwksClient.SigningKey): key is jwksClient.CertSigningKey {
+          return !!(key as jwksClient.CertSigningKey).publicKey;
+        }
+
+        if (isRSA(key)) {
+          callback(error, key.rsaPublicKey);
+        } else if (isCert(key)) {
+          callback(error, key.publicKey);
+        } else {
+          callback(new Error('Unknown signing key type...'));
+        }
       });
     }, {
       audience: config.AUDIENCE,
