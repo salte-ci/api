@@ -41,6 +41,8 @@ Test:
   image: node:lts-alpine
   script:
     - npm start lint
+    - npm start check-types
+    - npm start test
   dependencies:
     - Install
 

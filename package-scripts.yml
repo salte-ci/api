@@ -5,6 +5,9 @@ scripts:
   lint:
     script: eslint src/**/*.ts
     description: Checks for any formatting errors
+  check-types:
+    script: tsc --noEmit
+    description: Validates that types are being used properly.
   test:
     default:
       script: cross-env LOG_LEVEL=none ENVIRONMENT=CI nyc mocha
