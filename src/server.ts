@@ -28,12 +28,12 @@ export class ExpressServer extends OvernightServer {
 
     this.app.use((error: any, _request: Request, response: Response, _next: NextFunction) => {
       logger.error(error);
-      let status = error.status ? error.status : 500;
+      const status = error.status || 500;
 
       return response.status(status).json({
         message: error.message,
         code: error.code || 'internal_server_error',
-        status: error.status || 500
+        status
       });
     });
 

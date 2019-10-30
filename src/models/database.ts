@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
 import { config } from '../shared/config';
 import { logger } from '../shared/logger';
-import { Base64 } from '../utils/convert';
 
 import { AccountModel } from './account';
 import { BotModel } from './bot';

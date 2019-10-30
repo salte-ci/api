@@ -18,7 +18,7 @@ export interface Config {
   ISSUER: string;
   AUDIENCE: string;
 
-  PROVIDER_REDIRECT_URI?: string;
+  PROVIDER_REDIRECT_URI: string;
   DEFAULT_PROVIDERS: DefaultProviderConfig[];
 
   /**
