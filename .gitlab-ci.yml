@@ -1,16 +1,12 @@
 variables:
   AWS_ACCESS_KEY_ID: "$CI_ONLY_AWS_ACCESS_KEY"
   AWS_SECRET_ACCESS_KEY: "$CI_ONLY_AWS_SECRET_ACCESS_KEY"
-  TF_VAR_DO_DOCKER_CA_CERT: $DO_DOCKER_CA_CERT
-  TF_VAR_DO_DOCKER_CLIENT_CERT: $DO_DOCKER_CLIENT_CERT
-  TF_VAR_DO_DOCKER_CLIENT_KEY: $DO_DOCKER_CLIENT_KEY
-  TF_VAR_DO_PRIVATE_SSH_KEY: $DO_PRIVATE_SSH_KEY
 
 stages:
   - install
   - build
-  - publish
   - deploy
+  - publish
 
 Install:
   stage: install
@@ -46,40 +42,33 @@ Test:
   dependencies:
     - Install
 
-Publish Image:
-  stage: publish
-  image: docker:stable
-  services:
-    - docker:dind
-  script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-    - docker build -t "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}" .
-    - docker push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
-    - docker logout ${CI_REGISTRY}
-  dependencies:
-    - Install:Deploy
-  only:
-    - live
-    - alpha
-
 .deploy_template: &deploy
   stage: deploy
   image:
-    name: hashicorp/terraform:0.11.14
+    name: hashicorp/terraform:light
     entrypoint: [""]
   script:
     - terraform init
     - terraform workspace select $ENVIRONMENT || terraform workspace new $ENVIRONMENT
-    - terraform apply -auto-approve
+    - terraform apply -auto-approve -var GIT_SHA=$CI_COMMIT_SHORT_SHA
+
+.publish_template: &publish
+  stage: publish
+  image: docker:stable
+  services:
+    - docker:dind
+  dependencies:
+    - Install:Deploy
+  script:
+    - $(docker run -i --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY infrastructureascode/aws-cli:1.16.111 aws ecr get-login --no-include-email --region us-east-1 | tr -d "\r\n")
+    - docker build -t salte-ci-api .
+    - docker tag salte-ci-api 853196007801.dkr.ecr.us-east-1.amazonaws.com/salte-ci-api-$ENVIRONMENT:$CI_COMMIT_SHORT_SHA
+    - docker push 853196007801.dkr.ecr.us-east-1.amazonaws.com/salte-ci-api-$ENVIRONMENT:$CI_COMMIT_SHORT_SHA
 
 Deploy to Alpha:
   <<: *deploy
   variables:
     ENVIRONMENT: alpha
-    TF_VAR_REGISTRY: "$CI_REGISTRY"
-    TF_VAR_REGISTRY_USER: "$CI_REGISTRY_USER"
-    TF_VAR_REGISTRY_PASSWORD: "$CI_REGISTRY_PASSWORD"
-    TF_VAR_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
     TF_VAR_BITBUCKET_CLIENT_ID: "$BITBUCKET_CLIENT_ID"
     TF_VAR_BITBUCKET_CLIENT_SECRET: "$BITBUCKET_CLIENT_SECRET"
     TF_VAR_GITHUB_CLIENT_ID: "$GITHUB_CLIENT_ID"
@@ -92,15 +81,17 @@ Deploy to Alpha:
   only:
     - alpha
 
+Publish to Alpha:
+  <<: *publish
+  variables:
+    ENVIRONMENT: alpha
+  only:
+    - alpha
+
 Deploy to Live:
   <<: *deploy
   variables:
     ENVIRONMENT: live
-    # TODO: Change this to Docker Hub Once we Go Live...
-    TF_VAR_REGISTRY: "$CI_REGISTRY"
-    TF_VAR_REGISTRY_USER: "$CI_REGISTRY_USER"
-    TF_VAR_REGISTRY_PASSWORD: "$CI_REGISTRY_PASSWORD"
-    TF_VAR_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
     TF_VAR_BITBUCKET_CLIENT_ID: "$BITBUCKET_CLIENT_ID"
     TF_VAR_BITBUCKET_CLIENT_SECRET: "$BITBUCKET_CLIENT_SECRET"
     TF_VAR_GITHUB_CLIENT_ID: "$GITHUB_CLIENT_ID"
@@ -110,5 +101,12 @@ Deploy to Live:
   environment:
     name: live
     url: https://api.salte.ci
+  only:
+    - live
+
+Publish to Live:
+  <<: *publish
+  variables:
+    ENVIRONMENT: live
   only:
     - live
