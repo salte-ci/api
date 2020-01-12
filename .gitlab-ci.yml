@@ -50,7 +50,7 @@ Test:
   script:
     - terraform init
     - terraform workspace select $ENVIRONMENT || terraform workspace new $ENVIRONMENT
-    - terraform apply -auto-approve -var GIT_SHA=$CI_COMMIT_SHORT_SHA
+    - terraform apply -auto-approve -var VERSION=$CI_COMMIT_SHA
 
 .publish_template: &publish
   stage: publish

@@ -12,6 +12,8 @@ export interface DefaultProviderConfig {
 };
 
 export interface Config {
+  [key: string]: any;
+
   DATABASE_URL: string;
 
   JWKS_URL: string;
@@ -29,6 +31,11 @@ export interface Config {
   LOG_LEVEL: string;
 
   ENVIRONMENT: string;
+
+  /**
+   * The Deployed Version of the API
+   */
+  VERSION: string;
 };
 
 export function env(name: string, defaultValue?: any): any {
@@ -47,7 +54,7 @@ export function env(name: string, defaultValue?: any): any {
   return null;
 }
 
-const config: Config = {
+export const config: Config = {
   DATABASE_URL: env('DATABASE_URL', 'sqlite://:memory'),
   JWKS_URL: env('JWKS_URL', 'https://salte.auth0.com/.well-known/jwks.json'),
   ISSUER: env('ISSUER', 'https://salte.auth0.com/'),
@@ -59,7 +66,24 @@ const config: Config = {
 
   PORT: Number(env('PORT', 8080)),
   LOG_LEVEL: env('LOG_LEVEL', 'info'),
-  ENVIRONMENT: env('ENVIRONMENT', 'local')
+  ENVIRONMENT: env('ENVIRONMENT', 'local'),
+  VERSION: env('VERSION', 'local')
 };
 
-export { config };
+export const PUBLIC_CONFIG_ITEMS = [
+  'JWKS_URL',
+  'ISSUER',
+  'AUDIENCE',
+  'PROVIDER_REDIRECT_URI',
+  'PORT',
+  'LOG_LEVEL',
+  'ENVIRONMENT',
+  'VERSION'
+];
+
+export const publicConfig: Partial<Config> = Object.keys(config)
+  .filter(key => PUBLIC_CONFIG_ITEMS.includes(key))
+  .reduce((output: Partial<Config>, key: string) => {
+    output[key] = config[key];
+    return output;
+  }, {});

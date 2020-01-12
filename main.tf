@@ -1,4 +1,4 @@
-variable "GIT_SHA" {}
+variable "VERSION" {}
 variable "GITHUB_CLIENT_ID" {}
 variable "GITHUB_CLIENT_SECRET" {}
 variable "BITBUCKET_CLIENT_ID" {}
@@ -69,7 +69,7 @@ module "ecs" {
 
   name        = "salte-ci-api"
   environment = local.environment
-  image_tag   = var.GIT_SHA
+  image_tag   = var.VERSION
 
   certificate_arn = data.aws_acm_certificate.certificate.arn
 
@@ -92,6 +92,9 @@ module "ecs" {
     value = "${data.aws_ssm_parameter.database_url.value}/salte-ci"
   }, {
     name = "DEFAULT_PROVIDERS"
+    value = jsonencode(local.default_providers)
+  }, {
+    name = "VERSION"
     value = jsonencode(local.default_providers)
   }]
 }
