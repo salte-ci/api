@@ -65,7 +65,7 @@ data "aws_route53_zone" "zone" {
 }
 
 module "ecs" {
-  source = "git::https://gitlab.com/salte-io/terraform-modules/terraform-aws-ecs.git?ref=1.0.9"
+  source = "git::https://gitlab.com/salte-io/terraform-modules/terraform-aws-ecs.git?ref=1.1.0"
 
   name        = "salte-ci-api"
   environment = local.environment
@@ -78,9 +78,6 @@ module "ecs" {
   environment_variables = [{
     name = "LOG_LEVEL"
     value = "info"
-  }, {
-    name = "ENVIRONMENT"
-    value = local.environment
   }, {
     name = "AUDIENCE"
     value = local.audience
