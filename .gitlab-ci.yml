@@ -62,8 +62,8 @@ Test:
   script:
     - $(docker run -i --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY infrastructureascode/aws-cli:1.16.111 aws ecr get-login --no-include-email --region us-east-1 | tr -d "\r\n")
     - docker build -t salte-ci-api .
-    - docker tag salte-ci-api 853196007801.dkr.ecr.us-east-1.amazonaws.com/salte-ci-api-$ENVIRONMENT:$CI_COMMIT_SHORT_SHA
-    - docker push 853196007801.dkr.ecr.us-east-1.amazonaws.com/salte-ci-api-$ENVIRONMENT:$CI_COMMIT_SHORT_SHA
+    - docker tag salte-ci-api 853196007801.dkr.ecr.us-east-1.amazonaws.com/salte-ci-api-$ENVIRONMENT:$CI_COMMIT_SHA
+    - docker push 853196007801.dkr.ecr.us-east-1.amazonaws.com/salte-ci-api-$ENVIRONMENT:$CI_COMMIT_SHA
 
 Deploy to Alpha:
   <<: *deploy
