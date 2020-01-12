@@ -92,7 +92,7 @@ module "ecs" {
     value = jsonencode(local.default_providers)
   }, {
     name = "VERSION"
-    value = jsonencode(local.default_providers)
+    value = var.VERSION
   }]
 }
 
