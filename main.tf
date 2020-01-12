@@ -65,10 +65,11 @@ data "aws_route53_zone" "zone" {
 }
 
 module "ecs" {
-  source = "git::https://gitlab.com/salte-io/terraform-modules/terraform-aws-ecs.git?ref=1.1.0"
+  source = "git::https://gitlab.com/salte-io/terraform-modules/terraform-aws-ecs.git?ref=1.1.1"
 
   name        = "salte-ci-api"
   environment = local.environment
+  domain_name = local.domain_name
   image_tag   = var.VERSION
 
   certificate_arn = data.aws_acm_certificate.certificate.arn
