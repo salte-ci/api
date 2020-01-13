@@ -65,7 +65,7 @@ data "aws_route53_zone" "zone" {
 }
 
 module "ecs" {
-  source = "git::https://gitlab.com/salte-io/terraform-modules/terraform-aws-ecs.git?ref=1.1.2"
+  source = "git::https://gitlab.com/salte-io/terraform-modules/terraform-aws-ecs.git?ref=1.1.3"
 
   name        = "salte-ci-api"
   environment = local.environment
@@ -76,27 +76,17 @@ module "ecs" {
 
   health_check = "/health"
 
-  environment_variables = [{
-    name = "LOG_LEVEL"
-    value = "info"
-  }, {
-    name = "AUDIENCE"
-    value = local.audience
-  }, {
-    name = "PROVIDER_REDIRECT_URI"
-    value = local.provider_redirect_uri
-  }, {
-    name = "DEFAULT_PROVIDERS"
-    value = jsonencode(local.default_providers)
-  }, {
-    name = "VERSION"
-    value = var.VERSION
-  }]
+  environment_variables = {
+    LOG_LEVEL = "info"
+    AUDIENCE = local.audience
+    PROVIDER_REDIRECT_URI = local.provider_redirect_uri
+    DEFAULT_PROVIDERS = jsonencode(local.default_providers)
+    VERSION = var.VERSION
+  }
 
-  secrets = [{
-    name = "DATABASE_URL",
-    valueFrom = data.aws_ssm_parameter.database_url.arn
-  }]
+  secret_variables = {
+    DATABASE_URL = data.aws_ssm_parameter.database_url.arn
+  }
 }
 
 resource "aws_route53_record" "www" {
