@@ -1,6 +1,6 @@
 import { Server } from 'http';
 import * as getPort from 'get-port';
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import * as WebSocket from 'ws';
 import { socket } from './socket';
 import { SocketInterface } from '../sockets/interface';
@@ -76,7 +76,7 @@ describe('Register', () => {
 
       await open(ws);
       await send(ws, JSON.stringify(['basic']), (message: string) => {
-        expect(JSON.parse(message)).to.deep.equal([
+        expect(JSON.parse(message)).equals([
           'basic',
           {
             hello: 'world'
@@ -96,14 +96,14 @@ describe('Register', () => {
 
       await open(ws);
       await send(ws, JSON.stringify(['basic']), (message) => {
-        expect(JSON.parse(message)).to.deep.equal([
+        expect(JSON.parse(message)).equals([
           'basic',
           'Unknown Event. (basic)'
         ]);
       });
 
       await send(ws, JSON.stringify(['bogus']), (message) => {
-        expect(JSON.parse(message)).to.deep.equal([
+        expect(JSON.parse(message)).equals([
           'bogus',
           'Payload was formatted incorrectly, please check the documentation to validate your request.'
         ]);
@@ -125,7 +125,7 @@ describe('Register', () => {
 
       await open(ws);
       await send(ws, JSON.stringify(['basic']), (message) => {
-        expect(JSON.parse(message)).to.deep.equal([
+        expect(JSON.parse(message)).equals([
           'basic',
           'Whoops!'
         ]);

@@ -1,13 +1,9 @@
 import * as sinon from 'sinon';
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
+import { expect } from '@hapi/code';
 import * as nock from 'nock';
 
 import { config } from '../shared/config';
 import { GitLabProvider } from './gitlab';
-
-chai.use(sinonChai);
-const { expect } = chai;
 
 describe('GitLabProvider', () => {
   afterEach(() => {
@@ -37,7 +33,7 @@ describe('GitLabProvider', () => {
         url: 'https://gitlab.com'
       });
 
-      expect(response).to.deep.equal({
+      expect(response).equals({
         access_token: 'access',
         refresh_token: 'refresh'
       });
@@ -48,11 +44,11 @@ describe('GitLabProvider', () => {
     it('should ensure the users token is valid', async () => {
       const provider = new GitLabProvider('https://api.github.com', '12345');
 
-      sinon.stub(provider.gitlab.Users, 'current').resolves();
+      const current = sinon.stub(provider.gitlab.Users, 'current').resolves();
 
       await provider.validate();
 
-      expect(provider.gitlab.Users.current).to.have.callCount(1);
+      sinon.assert.calledOnce(current);
     });
 
     it('should support errors', async () => {

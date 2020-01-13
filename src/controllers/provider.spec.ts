@@ -1,14 +1,10 @@
 import * as sinon from 'sinon';
-import * as chai from 'chai';
+import { expect } from '@hapi/code';
 import * as request from 'supertest';
-import * as sinonChai from 'sinon-chai';
 
 import { database } from '../models/database';
 import * as Auth from '../utils/auth';
 import { ExpressServer } from '../server';
-
-chai.use(sinonChai);
-const { expect } = chai;
 
 describe('ProviderController', () => {
   const { server } = new ExpressServer();
@@ -43,7 +39,7 @@ describe('ProviderController', () => {
 
       const { body } = await request(server).get('/providers');
 
-      expect(body).to.deep.equal([{
+      expect(body).equals([{
         id: provider.id,
         name: 'enterprise-github',
         friendly_name: 'Enterprise GitHub',
@@ -65,7 +61,7 @@ describe('ProviderController', () => {
 
       const { body } = await request(server).get('/providers');
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'unauthorized',
         message: `This endpoint is restricted to administrators.`,
         status: 401
@@ -75,7 +71,7 @@ describe('ProviderController', () => {
     it(`should throw an error if the user isn't authenticated`, async () => {
       const { body } = await request(server).get('/providers');
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'unauthorized',
         message: `Must be authenticated to view the active providers.`,
         status: 401

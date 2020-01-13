@@ -1,15 +1,11 @@
 import * as sinon from 'sinon';
-import * as chai from 'chai';
+import { expect } from '@hapi/code';
 import * as request from 'supertest';
-import * as sinonChai from 'sinon-chai';
 
 import { database } from '../models/database';
 import { GitHubProvider } from '../providers/github';
 import * as Auth from '../utils/auth';
 import { ExpressServer } from '../server';
-
-chai.use(sinonChai);
-const { expect } = chai;
 
 describe('LinkController', () => {
   const { server } = new ExpressServer();
@@ -58,7 +54,7 @@ describe('LinkController', () => {
     it(`should get a list of all the linked accounts`, async () => {
       const response = await request(server).get('/links');
 
-      expect(response.body).to.deep.equal([{
+      expect(response.body).equals([{
         account_id: account.id,
         provider_id: provider.id,
         access_token: '54321',
@@ -71,7 +67,7 @@ describe('LinkController', () => {
     it(`should support getting a specific linked account`, async () => {
       const response = await request(server).get(`/links/${provider.name}`);
 
-      expect(response.body).to.deep.equal({
+      expect(response.body).equals({
         account_id: account.id,
         provider_id: provider.id,
         access_token: '54321',
@@ -84,7 +80,7 @@ describe('LinkController', () => {
     it(`should throw an error if a link isn't found`, async () => {
       const { body } = await request(server).get('/links/unknown');
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'not_found',
         message: 'Unable to find link for the given provider. (unknown)',
         status: 404
@@ -95,7 +91,7 @@ describe('LinkController', () => {
       (Auth.auth as any).restore();
       const { body } = await request(server).get(`/links/${provider.name}`);
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'unauthorized',
         message: 'Must be authenticated to view linked accounts.',
         status: 401
@@ -105,10 +101,10 @@ describe('LinkController', () => {
 
   describe('function(post)', () => {
     it(`should validate the users token`, async () => {
-      sinon.stub(GitHubProvider, 'token').resolves({
+      const token = sinon.stub(GitHubProvider, 'token').resolves({
         access_token: 'access'
       });
-      sinon.stub(GitHubProvider.prototype, 'validate');
+      const validate = sinon.stub(GitHubProvider.prototype, 'validate');
 
       const { body } = await request(server).post(`/links/${provider.name}`).send({
         code: 'code'
@@ -118,15 +114,16 @@ describe('LinkController', () => {
       expect(body.provider_id).to.equal(provider.id);
       expect(body.access_token).to.equal('access');
       expect(body.refresh_token).to.equal(null);
-      expect(GitHubProvider.token).to.have.callCount(1);
-      expect(GitHubProvider.prototype.validate).to.have.callCount(1);
+
+      sinon.assert.calledOnce(token);
+      sinon.assert.calledOnce(validate);
     });
 
     it(`should throw an error if the token is invalid`, async () => {
-      sinon.stub(GitHubProvider, 'token').resolves({
+      const token = sinon.stub(GitHubProvider, 'token').resolves({
         access_token: 'access'
       });
-      sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
+      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
         throw new Error('Whoops');
       });
 
@@ -134,20 +131,21 @@ describe('LinkController', () => {
         code: 'code'
       });
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'invalid_token',
         message: 'Invalid token provided for the given provider. (enterprise-github)',
         status: 400
       });
-      expect(GitHubProvider.token).to.have.callCount(1);
-      expect(GitHubProvider.prototype.validate).to.have.callCount(1);
+
+      sinon.assert.calledOnce(token);
+      sinon.assert.calledOnce(validate);
     });
 
     it(`should throw an error a provider isn't given`, async () => {
-      sinon.stub(GitHubProvider, 'token').resolves({
+      const token = sinon.stub(GitHubProvider, 'token').resolves({
         access_token: 'access'
       });
-      sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
+      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
         throw new Error('Whoops');
       });
 
@@ -155,21 +153,22 @@ describe('LinkController', () => {
         code: 'code'
       });
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'invalid_provider_name',
         message: 'The name of a provider must be given. (undefined)',
         status: 400
       });
-      expect(GitHubProvider.token).to.have.callCount(0);
-      expect(GitHubProvider.prototype.validate).to.have.callCount(0);
+
+      sinon.assert.notCalled(token);
+      sinon.assert.notCalled(validate);
     });
 
     it(`should throw an error a user isn't authorized`, async () => {
       (Auth.auth as any).restore();
-      sinon.stub(GitHubProvider, 'token').resolves({
+      const token = sinon.stub(GitHubProvider, 'token').resolves({
         access_token: 'access'
       });
-      sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
+      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
         throw new Error('Whoops');
       });
 
@@ -177,20 +176,21 @@ describe('LinkController', () => {
         code: 'code'
       });
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'unauthorized',
         message: 'Must be authenticated to link new accounts.',
         status: 401
       });
-      expect(GitHubProvider.token).to.have.callCount(0);
-      expect(GitHubProvider.prototype.validate).to.have.callCount(0);
+
+      sinon.assert.notCalled(token);
+      sinon.assert.notCalled(validate);
     });
 
     it(`should throw an error a provider doesn't exist`, async () => {
-      sinon.stub(GitHubProvider, 'token').resolves({
+      const token = sinon.stub(GitHubProvider, 'token').resolves({
         access_token: 'access'
       });
-      sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
+      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
         throw new Error('Whoops');
       });
 
@@ -198,13 +198,14 @@ describe('LinkController', () => {
         code: 'code'
       });
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         code: 'not_found',
         message: `No provider exists for the given name. (unknown)`,
         status: 404
       });
-      expect(GitHubProvider.token).to.have.callCount(0);
-      expect(GitHubProvider.prototype.validate).to.have.callCount(0);
+
+      sinon.assert.notCalled(token);
+      sinon.assert.notCalled(validate);
     });
   });
 });

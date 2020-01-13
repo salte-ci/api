@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 
 import { Provider } from './interface';
 

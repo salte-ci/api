@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import { Base64 } from './convert';
 
 describe('convert', () => {

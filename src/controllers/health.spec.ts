@@ -1,5 +1,5 @@
 import * as sinon from 'sinon';
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import * as request from 'supertest';
 
 import { ExpressServer } from '../server';
@@ -16,7 +16,7 @@ describe('HealthController', () => {
     it(`should send back ok`, async () => {
       const { body } = await request(server).get('/health');
 
-      expect(body).to.deep.equal({
+      expect(body).equals({
         status: 'ok'
       });
     });

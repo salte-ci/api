@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import { fetch } from './fetch';
 
 describe('Fetch', () => {
@@ -6,7 +6,7 @@ describe('Fetch', () => {
     it('should support successful responses', async () => {
       const response = await fetch('https://google.com');
 
-      expect(response).to.be.ok;
+      expect(response).exists();
     });
 
     it('should support errors', async () => {

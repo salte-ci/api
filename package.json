@@ -4,7 +4,12 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "start": "nps"
+    "start": "ts-node .",
+    "lint": "eslint src/**/*.ts",
+    "check-types": "tsc --noEmit",
+    "test": "cross-env LOG_LEVEL=none ENVIRONMENT=CI nyc mocha",
+    "test:tdd": "cross-env LOG_LEVEL=none ENVIRONMENT=CI nyc mocha -w",
+    "report-coverage": "coveralls < coverage/lcov.info"
   },
   "repository": {
     "type": "git",
@@ -35,7 +40,6 @@
     "jwks-rsa": "^1.6.0",
     "mysql2": "^2.1.0",
     "node-fetch": "^2.6.0",
-    "nps": "^5.9.12",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5.21.3",
     "sequelize-typescript": "^1.1.0",

@@ -36,9 +36,9 @@ Test:
   stage: build
   image: node:lts-alpine
   script:
-    - npm start lint
-    - npm start check-types
-    - npm start test
+    - npm run lint
+    - npm run check-types
+    - npm run test
   dependencies:
     - Install
 

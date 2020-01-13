@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import * as sinon from 'sinon';
 import * as jwt from 'jsonwebtoken';
 import * as fetch from './fetch';
@@ -23,10 +23,6 @@ describe('Auth', () => {
 
   describe('function(auth)', () => {
     beforeEach(async () => {
-      const { AccountModel, UserModel } = await database();
-      sinon.spy(AccountModel, 'create');
-      sinon.spy(UserModel, 'create');
-
       sinon.stub(jwt, 'verify').callsFake((token, secretOrPublicKey, options, callback) => {
         if (!token) throw new Error(`Expected a token to be provided.`);
         if (typeof(secretOrPublicKey) !== 'function') throw new Error(`Expected Secret or Public Key to be a Function`);
@@ -46,6 +42,10 @@ describe('Auth', () => {
 
     it('should parse valid tokens', async () => {
       const { AccountModel, UserModel } = await database();
+
+      const accountCreate = sinon.spy(AccountModel, 'create');
+      const userCreate = sinon.spy(UserModel, 'create');
+
       const accessToken = `${Base64.encode(JSON.stringify({
         kid: 'MTFDREZEMjk3RkU0MzgyMThBNjczQzBERjdGRTc0MjI0MEE5MkI0OA'
       }))}.${Base64.encode(JSON.stringify({
@@ -58,31 +58,22 @@ describe('Auth', () => {
         header: sinon.stub().returns(`Bearer ${accessToken}`)
       } as any);
 
-      expect(token).to.deep.equal({
+      expect(token).equals({
         sub: '1234567890',
         name: 'John Doe',
         exp: 1524168810,
         token: accessToken
       });
-      expect(AccountModel.create).to.have.callCount(1);
-      expect(UserModel.create).to.have.callCount(1);
+
+      sinon.assert.calledOnce(accountCreate);
+      sinon.assert.calledOnce(userCreate);
     });
 
     it('should support multiple requests', async () => {
       const { AccountModel, UserModel } = await database();
 
-      await auth({
-        header: sinon.stub().returns(`Bearer ${Base64.encode(JSON.stringify({
-          kid: 'MTFDREZEMjk3RkU0MzgyMThBNjczQzBERjdGRTc0MjI0MEE5MkI0OA'
-        }))}.${Base64.encode(JSON.stringify({
-          sub: '1234567890',
-          name: 'John Doe',
-          exp: 1524168810
-        }))}.12345`)
-      } as any);
-
-      expect(AccountModel.create).to.have.callCount(1);
-      expect(UserModel.create).to.have.callCount(1);
+      const accountCreate = sinon.spy(AccountModel, 'create');
+      const userCreate = sinon.spy(UserModel, 'create');
 
       await auth({
         header: sinon.stub().returns(`Bearer ${Base64.encode(JSON.stringify({
@@ -94,12 +85,28 @@ describe('Auth', () => {
         }))}.12345`)
       } as any);
 
-      expect(AccountModel.create).to.have.callCount(1);
-      expect(UserModel.create).to.have.callCount(1);
+      sinon.assert.calledOnce(accountCreate);
+      sinon.assert.calledOnce(userCreate);
+
+      await auth({
+        header: sinon.stub().returns(`Bearer ${Base64.encode(JSON.stringify({
+          kid: 'MTFDREZEMjk3RkU0MzgyMThBNjczQzBERjdGRTc0MjI0MEE5MkI0OA'
+        }))}.${Base64.encode(JSON.stringify({
+          sub: '1234567890',
+          name: 'John Doe',
+          exp: 1524168810
+        }))}.12345`)
+      } as any);
+
+      sinon.assert.calledOnce(accountCreate);
+      sinon.assert.calledOnce(userCreate);
     });
 
     it('should throw an error for tokens without a kid', async () => {
       const { AccountModel, UserModel } = await database();
+
+      const accountCreate = sinon.spy(AccountModel, 'create');
+      const userCreate = sinon.spy(UserModel, 'create');
 
       const error = await auth({
         header: sinon.stub().returns(`Bearer ${Base64.encode(JSON.stringify({
@@ -112,32 +119,41 @@ describe('Auth', () => {
       } as any).catch((error) => error);;
 
       expect(error.message).to.equal('Invalid kid in token.');
-      expect(AccountModel.create).to.have.callCount(0);
-      expect(UserModel.create).to.have.callCount(0);
+
+      sinon.assert.notCalled(accountCreate);
+      sinon.assert.notCalled(userCreate);
     });
 
     it('should throw an error for malformed tokens', async () => {
       const { AccountModel, UserModel } = await database();
+
+      const accountCreate = sinon.spy(AccountModel, 'create');
+      const userCreate = sinon.spy(UserModel, 'create');
 
       const error = await auth({
         header: sinon.stub().returns(`token some-token`)
       } as any).catch((error) => error);
 
       expect(error.message).to.equal(`Token didn't match the expected format. "Bearer <token>"`);
-      expect(AccountModel.create).to.have.callCount(0);
-      expect(UserModel.create).to.have.callCount(0);
+
+      sinon.assert.notCalled(accountCreate);
+      sinon.assert.notCalled(userCreate);
     });
 
     it('should support a authorization token not being provided', async () => {
       const { AccountModel, UserModel } = await database();
+
+      const accountCreate = sinon.spy(AccountModel, 'create');
+      const userCreate = sinon.spy(UserModel, 'create');
 
       const token = await auth({
         header: sinon.stub().withArgs('authorization').returns(undefined)
       } as any);
 
       expect(token).to.equal(null);
-      expect(AccountModel.create).to.have.callCount(0);
-      expect(UserModel.create).to.have.callCount(0);
+
+      sinon.assert.notCalled(accountCreate);
+      sinon.assert.notCalled(userCreate);
     });
   });
 });

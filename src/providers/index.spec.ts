@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import { providers } from './index';
 import { BitbucketProvider } from './bitbucket';
 import { GitHubProvider } from './github';

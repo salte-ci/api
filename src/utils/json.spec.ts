@@ -1,10 +1,10 @@
-import { expect } from 'chai';
+import { expect } from '@hapi/code';
 import { safeParse } from './json';
 
 describe('JSON', () => {
   describe('function(safeParse)', () => {
     it('should support json', () => {
-      expect(safeParse(JSON.stringify({ hello: 'world' }))).to.deep.equal({
+      expect(safeParse(JSON.stringify({ hello: 'world' }))).equals({
         hello: 'world'
       });
     });
