@@ -38,7 +38,7 @@ sequelize.addModels([
 let setup = false;
 export async function database() {
   if (!setup) {
-    await CreateDatabase(sequelize, config.DATABASE_NAME);
+    await CreateDatabase(config.DATABASE_URL, config.DATABASE_NAME);
     await sequelize.sync();
     await sequelize.authenticate();
 

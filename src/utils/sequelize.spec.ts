@@ -1,29 +1,32 @@
 import * as sinon from 'sinon';
-import { chance, database } from './test/mock';
+import { Sequelize } from 'sequelize-typescript';
+
+import { chance } from './test/mock';
 import { CreateDatabase } from './sequelize';
 
 describe('Sequelize', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
   describe('function(CreateDatabase)', () => {
     it('should create a database if our dialect is not sqlite', async () => {
       const name = chance.string();
-      const sequelize = database();
 
-      const query = sinon.stub(sequelize, 'query').resolves();
-      sinon.stub(sequelize.options, 'dialect').get(() => 'mysql');
+      const query = sinon.stub(Sequelize.prototype, 'query').resolves();
 
-      await CreateDatabase(sequelize, name);
+      await CreateDatabase('mysql://localhost', name);
 
       sinon.assert.calledOnce(query);
-      sinon.assert.calledWithExactly(query, `CREATE DATABASE ${name}`);
+      sinon.assert.calledWithExactly(query, `CREATE DATABASE \`${name}\`;`);
     });
 
     it('should skip creating a database if our dialect is sqlite', async () => {
       const name = chance.string();
-      const sequelize = database();
 
-      const query = sinon.stub(sequelize, 'query').resolves();
+      const query = sinon.stub(Sequelize.prototype, 'query').resolves();
 
-      await CreateDatabase(sequelize, name);
+      await CreateDatabase('sqlite://:memory', name);
 
       sinon.assert.notCalled(query);
     });
