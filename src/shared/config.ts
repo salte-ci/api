@@ -54,8 +54,11 @@ export function env(name: string, defaultValue?: any): any {
   return null;
 }
 
+export const ENVIRONMENT = env('ENVIRONMENT', 'local');
+
 export const config: Config = {
   DATABASE_URL: env('DATABASE_URL', 'sqlite://:memory'),
+  DATABASE_NAME: env('DATABASE_NAME', `salte-ci-${ENVIRONMENT}`),
   JWKS_URL: env('JWKS_URL', 'https://salte.auth0.com/.well-known/jwks.json'),
   ISSUER: env('ISSUER', 'https://salte.auth0.com/'),
   AUDIENCE: env('AUDIENCE', 'https://api.alpha.salte.ci'),
@@ -66,7 +69,7 @@ export const config: Config = {
 
   PORT: Number(env('PORT', 8080)),
   LOG_LEVEL: env('LOG_LEVEL', 'info'),
-  ENVIRONMENT: env('ENVIRONMENT', 'local'),
+  ENVIRONMENT,
   VERSION: env('VERSION', 'local')
 };
 

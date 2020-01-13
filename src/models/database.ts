@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize-typescript';
 import { config } from '../shared/config';
 import { logger } from '../shared/logger';
+import { CreateDatabase } from '../utils/sequelize';
 
 import { AccountModel } from './account';
 import { BotModel } from './bot';
@@ -12,7 +13,7 @@ import { RunnerModel } from './runner';
 import { RepoModel } from './repo';
 import { UserModel } from './user';
 
-const sequelize = new Sequelize(config.DATABASE_URL, {
+const sequelize = new Sequelize(`${config.DATABASE_URL}/${config.DATABASE_NAME}`, {
   typeValidation: true,
   define: {
     createdAt: 'created_at',
@@ -37,6 +38,7 @@ sequelize.addModels([
 let setup = false;
 export async function database() {
   if (!setup) {
+    await CreateDatabase(sequelize, config.DATABASE_NAME);
     await sequelize.sync();
     await sequelize.authenticate();
 

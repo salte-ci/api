@@ -86,14 +86,16 @@ module "ecs" {
     name = "PROVIDER_REDIRECT_URI"
     value = local.provider_redirect_uri
   }, {
-    name = "DATABASE_URL"
-    value = "${data.aws_ssm_parameter.database_url.value}/salte-ci"
-  }, {
     name = "DEFAULT_PROVIDERS"
     value = jsonencode(local.default_providers)
   }, {
     name = "VERSION"
     value = var.VERSION
+  }]
+
+  secrets = [{
+    name = "DATABASE_URL",
+    valueFrom = data.aws_ssm_parameter.database_url.arn
   }]
 }
 
