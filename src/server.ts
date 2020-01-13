@@ -1,6 +1,7 @@
 import PromiseRouter from 'express-promise-router';
 import { Server } from 'http';
 import { json, NextFunction, Request, Response } from 'express';
+import * as cors from 'cors';
 import { Server as OvernightServer } from '@overnightjs/core';
 import { socket } from './utils/socket';
 import { auth } from './utils/auth';
@@ -14,6 +15,7 @@ export class ExpressServer extends OvernightServer {
   public constructor() {
     super();
 
+    this.app.use(cors());
     this.app.use(json());
     this.app.use(async (req: any, res: Response, next: NextFunction) => {
       try {
