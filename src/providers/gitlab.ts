@@ -15,7 +15,7 @@ export class GitLabProvider extends Provider {
     });
   }
 
-  static async token(options: Provider.TokenOptions): Promise<Provider.TokenResponse> {
+  static async token(options: Provider.UserTokenOptions | Provider.AppTokenOptions): Promise<Provider.TokenResponse> {
     const response = await request.post(`${options.url}/oauth/token`).send({
       client_id: options.client_id,
       client_secret: options.client_secret,

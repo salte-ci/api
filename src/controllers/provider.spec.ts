@@ -6,6 +6,7 @@ import { database } from '../models/database';
 import * as Auth from '../utils/auth';
 import { ExpressServer } from '../server';
 import { CreateProvider } from '../utils/test/mock';
+import { computed, config } from '../shared/config';
 
 describe('ProviderController', () => {
   const { server } = new ExpressServer();
@@ -26,7 +27,7 @@ describe('ProviderController', () => {
     server.close();
   });
 
-  describe('function(get)', () => {
+  describe('function(getProvider)', () => {
     it(`should return a list of all the providers`, async () => {
       sinon.stub(Auth, 'auth').resolves({
         sub: '12345',
@@ -36,6 +37,8 @@ describe('ProviderController', () => {
       const { body } = await request(server).get('/providers');
 
       expect(body).equals([{
+        app_id: provider.app_id,
+        private_key: provider.private_key,
         id: provider.id,
         name: provider.name,
         friendly_name: provider.friendly_name,
@@ -71,6 +74,70 @@ describe('ProviderController', () => {
         code: 'unauthorized',
         message: `Must be authenticated to view the active providers.`,
         status: 401
+      });
+    });
+  });
+
+  describe('function(getDescriptor)', () => {
+    it(`should return a descriptor for a bitbucket provider`, async () => {
+      const provider = await CreateProvider({
+        type: 'bitbucket',
+      });
+
+      const { body } = await request(server).get(`/providers/${provider.name}/descriptor`);
+
+      expect(body).equals({
+        key: computed.name,
+        name: 'Salte CI',
+        description: 'The simplest and most versatile build platform in existence.',
+        vendor: {
+          name: 'Salte',
+          url: config.PROVIDER_REDIRECT_URI
+        },
+        baseUrl: config.URL,
+        authentication: {
+          type: 'jwt'
+        },
+        lifecycle: {
+          installed: '/installed',
+          uninstalled: '/uninstalled'
+        },
+        modules: {
+          webhooks: [{
+            event: '*',
+            url: `/providers/${provider.name}/hooks`
+          }]
+        },
+        scopes: [
+          'account'
+        ],
+        contexts: [
+          'account'
+        ]
+      });
+    });
+
+    it(`should throw an error if the provider doesn't exist`, async () => {
+      const { body } = await request(server).get('/providers/invalid/descriptor');
+
+      expect(body).equals({
+        code: 'not_found',
+        message: `Unable to find a provider for the given name. (invalid)`,
+        status: 404
+      });
+    });
+
+    it(`should throw an error if the provider isn't a bitbucket provider`, async () => {
+      const provider = await CreateProvider({
+        type: 'github',
+      });
+
+      const { body } = await request(server).get(`/providers/${provider.name}/descriptor`);
+
+      expect(body).equals({
+        code: 'invalid_provider',
+        message: `The given provider isn't a 'bitbucket' provider.`,
+        status: 400
       });
     });
   });

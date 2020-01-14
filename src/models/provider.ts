@@ -1,32 +1,40 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { LinkedAccountModel } from './linked-account';
+import { InstallationModel } from './installation';
 import { EnvironmentVariableModel } from './environment-variable';
-import { RepoModel } from './repo';
+import { RepositoryModel } from './repository';
+import { OrganizationModel } from './organization';
 
 export const PROVIDER_TYPES = ['bitbucket', 'github', 'gitlab'];
 
 @Table({
   modelName: 'provider',
   defaultScope: {
-    attributes: { exclude: ['client_secret'] }
+    attributes: { exclude: ['client_secret', 'private_key'] }
   },
   scopes: {
     admin: {
       attributes: {
-        include: ['client_secret']
+        include: ['client_secret', 'private_key']
       }
     }
   }
 })
 export class ProviderModel extends Model<ProviderModel> {
+  @HasMany(() => InstallationModel, 'provider_id')
+  installations: InstallationModel[];
+
   @HasMany(() => LinkedAccountModel, 'provider_id')
   linkedAccounts: LinkedAccountModel[];
 
   @HasMany(() => EnvironmentVariableModel, 'provider_id')
   environmentVariables: EnvironmentVariableModel[];
 
-  @HasMany(() => RepoModel, 'provider_id')
-  repos: RepoModel[];
+  @HasMany(() => OrganizationModel, 'provider_id')
+  organizations: OrganizationModel[];
+
+  @HasMany(() => RepositoryModel, 'provider_id')
+  repositories: RepositoryModel[];
 
   @Column({
     type: DataType.INTEGER,
@@ -39,6 +47,12 @@ export class ProviderModel extends Model<ProviderModel> {
     type: DataType.STRING,
     allowNull: false
   })
+  app_id: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
   client_id: string;
 
   @Column({
@@ -46,6 +60,12 @@ export class ProviderModel extends Model<ProviderModel> {
     allowNull: false
   })
   client_secret: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false
+  })
+  private_key: string;
 
   @Column({
     type: DataType.STRING,
