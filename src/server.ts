@@ -32,7 +32,7 @@ export class ExpressServer extends OvernightServer {
       logger.error(error);
       const status = error.status || 500;
 
-      return response.status(status).json({
+      return response.status(status).send({
         message: error.message,
         code: error.code || 'internal_server_error',
         status

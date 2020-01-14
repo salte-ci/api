@@ -65,7 +65,7 @@ export const config: Config = {
 
   PROVIDER_REDIRECT_URI: env('PROVIDER_REDIRECT_URI', 'http://localhost:8081'),
 
-  DEFAULT_PROVIDERS: env('DEFAULT_PROVIDERS') || [],
+  DEFAULT_PROVIDERS: env('DEFAULT_PROVIDERS', []),
 
   PORT: Number(env('PORT', 8080)),
   LOG_LEVEL: env('LOG_LEVEL', 'info'),

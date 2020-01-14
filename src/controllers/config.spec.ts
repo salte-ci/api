@@ -10,6 +10,9 @@ describe('Controller(Config)', () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  after(() => {
     server.close();
   });
 

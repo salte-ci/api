@@ -3,9 +3,10 @@ import { expect } from '@hapi/code';
 import * as request from 'supertest';
 
 import { database } from '../models/database';
-import { GitHubProvider } from '../providers/github';
+import { providers } from '../providers';
 import * as Auth from '../utils/auth';
 import { ExpressServer } from '../server';
+import { CreateAccount, CreateProvider, CreateLinkedAccount } from '../utils/test/mock';
 
 describe('LinkController', () => {
   const { server } = new ExpressServer();
@@ -13,41 +14,32 @@ describe('LinkController', () => {
   let provider: any;
 
   beforeEach(async () => {
-    sinon.stub(Auth, 'auth').resolves({
-      sub: '12345'
-    });
-
-    const { AccountModel, ProviderModel, sequelize } = await database();
+    const { sequelize } = await database();
     await sequelize.sync({ force: true });
 
-    account = await AccountModel.create({
-      id: '12345'
-    });
+    account = await CreateAccount();
 
-    provider = await ProviderModel.create({
-      name: 'enterprise-github',
-      friendly_name: 'Enterprise GitHub',
-      type: 'github',
-      url: 'https://github.com',
-      api_url: 'https://api.github.com',
-      client_id: 'client_id',
-      client_secret: 'client_secret'
+    provider = await CreateProvider();
+
+    sinon.stub(Auth, 'auth').resolves({
+      sub: account.id
     });
   });
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  after(() => {
     server.close();
   });
 
   describe('function(get)', () => {
     let linkedAccount: any;
     beforeEach(async () => {
-      const { LinkedAccountModel } = await database();
-      linkedAccount = await LinkedAccountModel.create({
+      linkedAccount = await CreateLinkedAccount({
         account_id: account.id,
-        provider_id: provider.id,
-        access_token: '54321'
+        provider_id: provider.id
       });
     });
 
@@ -57,7 +49,7 @@ describe('LinkController', () => {
       expect(response.body).equals([{
         account_id: account.id,
         provider_id: provider.id,
-        access_token: '54321',
+        access_token: linkedAccount.access_token,
         refresh_token: null,
         created_at: linkedAccount.created_at.toISOString(),
         updated_at: linkedAccount.updated_at.toISOString()
@@ -70,7 +62,7 @@ describe('LinkController', () => {
       expect(response.body).equals({
         account_id: account.id,
         provider_id: provider.id,
-        access_token: '54321',
+        access_token: linkedAccount.access_token,
         refresh_token: null,
         created_at: linkedAccount.created_at.toISOString(),
         updated_at: linkedAccount.updated_at.toISOString()
@@ -101,29 +93,32 @@ describe('LinkController', () => {
 
   describe('function(post)', () => {
     it(`should validate the users token`, async () => {
-      const token = sinon.stub(GitHubProvider, 'token').resolves({
+      const Provider = providers(provider.type);
+      const token = sinon.stub(Provider, 'token').resolves({
         access_token: 'access'
       });
-      const validate = sinon.stub(GitHubProvider.prototype, 'validate');
+      const validate = sinon.stub(Provider.prototype, 'validate');
 
-      const { body } = await request(server).post(`/links/${provider.name}`).send({
+      const { body, status } = await request(server).post(`/links/${provider.name}`).send({
         code: 'code'
       });
 
-      expect(body.account_id).to.equal(account.id);
-      expect(body.provider_id).to.equal(provider.id);
-      expect(body.access_token).to.equal('access');
-      expect(body.refresh_token).to.equal(null);
+      expect(status).equals(200);
+      expect(body.account_id).equals(account.id);
+      expect(body.provider_id).equals(provider.id);
+      expect(body.access_token).equals('access');
+      expect(body.refresh_token).equals(null);
 
       sinon.assert.calledOnce(token);
       sinon.assert.calledOnce(validate);
     });
 
     it(`should throw an error if the token is invalid`, async () => {
-      const token = sinon.stub(GitHubProvider, 'token').resolves({
+      const Provider = providers(provider.type);
+      const token = sinon.stub(Provider, 'token').resolves({
         access_token: 'access'
       });
-      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
+      const validate = sinon.stub(Provider.prototype, 'validate').callsFake(() => {
         throw new Error('Whoops');
       });
 
@@ -133,7 +128,7 @@ describe('LinkController', () => {
 
       expect(body).equals({
         code: 'invalid_token',
-        message: 'Invalid token provided for the given provider. (enterprise-github)',
+        message: `Invalid token provided for the given provider. (${provider.name})`,
         status: 400
       });
 
@@ -142,12 +137,11 @@ describe('LinkController', () => {
     });
 
     it(`should throw an error a provider isn't given`, async () => {
-      const token = sinon.stub(GitHubProvider, 'token').resolves({
+      const Provider = providers(provider.type);
+      const token = sinon.stub(Provider, 'token').resolves({
         access_token: 'access'
       });
-      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
-        throw new Error('Whoops');
-      });
+      const validate = sinon.stub(Provider.prototype, 'validate');
 
       const { body } = await request(server).post(`/links`).send({
         code: 'code'
@@ -165,12 +159,11 @@ describe('LinkController', () => {
 
     it(`should throw an error a user isn't authorized`, async () => {
       (Auth.auth as any).restore();
-      const token = sinon.stub(GitHubProvider, 'token').resolves({
+      const Provider = providers(provider.type);
+      const token = sinon.stub(Provider, 'token').resolves({
         access_token: 'access'
       });
-      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
-        throw new Error('Whoops');
-      });
+      const validate = sinon.stub(Provider.prototype, 'validate');
 
       const { body } = await request(server).post(`/links`).send({
         code: 'code'
@@ -187,13 +180,6 @@ describe('LinkController', () => {
     });
 
     it(`should throw an error a provider doesn't exist`, async () => {
-      const token = sinon.stub(GitHubProvider, 'token').resolves({
-        access_token: 'access'
-      });
-      const validate = sinon.stub(GitHubProvider.prototype, 'validate').callsFake(() => {
-        throw new Error('Whoops');
-      });
-
       const { body } = await request(server).post(`/links/unknown`).send({
         code: 'code'
       });
@@ -203,9 +189,6 @@ describe('LinkController', () => {
         message: `No provider exists for the given name. (unknown)`,
         status: 404
       });
-
-      sinon.assert.notCalled(token);
-      sinon.assert.notCalled(validate);
     });
   });
 });

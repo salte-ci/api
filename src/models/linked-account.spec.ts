@@ -1,5 +1,6 @@
 import { expect } from '@hapi/code';
 import { database } from './database';
+import { CreateProvider, CreateAccount, CreateLinkedAccount, chance } from '../utils/test/mock';
 
 describe('LinkedAccountModel', () => {
   beforeEach(async () => {
@@ -8,45 +9,41 @@ describe('LinkedAccountModel', () => {
   });
 
   it('should link an account to a provider', async () => {
-    const { AccountModel, ProviderModel, LinkedAccountModel } = await database();
+    const account = await CreateAccount();
 
-    const account = await AccountModel.create({
-      id: '12345'
-    });
+    const provider = await CreateProvider();
 
-    const provider = await ProviderModel.create({
-      name: 'enterprise-github',
-      friendly_name: 'Enterprise GitHub',
-      type: 'github',
-      url: 'https://github.com',
-      api_url: 'https://api.github.com',
-      client_id: 'client_id',
-      client_secret: 'client_secret'
-    });
-
-    const linkedAccount = await LinkedAccountModel.create({
+    const linkedAccount = await CreateLinkedAccount({
       account_id: account.id,
       provider_id: provider.id,
-      access_token: '54321'
     });
 
-    expect(linkedAccount.account_id).to.equal('12345');
-    expect(linkedAccount.provider_id).to.equal(1);
-    expect(linkedAccount.access_token).to.equal('54321');
+    expect(linkedAccount.account_id).to.equal(account.id);
+    expect(linkedAccount.provider_id).to.equal(provider.id);
+    expect(linkedAccount.access_token).exists();
     expect(linkedAccount.updated_at).to.be.an.instanceOf(Date);
     expect(linkedAccount.created_at).to.be.an.instanceOf(Date);
   });
 
-  it(`should throw an error if the account or provider don't exist`, async () => {
-    const { LinkedAccountModel } = await database();
+  it(`should throw an error if the account doesn't exist`, async () => {
+    const provider = await CreateProvider();
 
-    const error = await LinkedAccountModel.create({
-      account_id: 'bogus',
-      provider_id: -1,
-      access_token: '54321'
-    }).catch((error: Error) => error);
+    const promise = CreateLinkedAccount({
+      account_id: chance.string(),
+      provider_id: provider.id,
+    });
 
-    expect(error).to.be.an.instanceOf(Error);
-    expect(error.message).to.equal('SQLITE_CONSTRAINT: FOREIGN KEY constraint failed');
+    await expect(promise).rejects(Error, 'SQLITE_CONSTRAINT: FOREIGN KEY constraint failed');
+  });
+
+  it(`should throw an error if the provider doesn't exist`, async () => {
+    const account = await CreateAccount();
+
+    const promise = CreateLinkedAccount({
+      account_id: account.id,
+      provider_id: chance.integer(),
+    });
+
+    await expect(promise).rejects(Error, 'SQLITE_CONSTRAINT: FOREIGN KEY constraint failed');
   });
 });

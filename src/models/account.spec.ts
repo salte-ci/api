@@ -1,5 +1,6 @@
 import { expect } from '@hapi/code';
 import { database } from './database';
+import { CreateAccount } from '../utils/test/mock';
 
 describe('AccountModel', () => {
   beforeEach(async () => {
@@ -8,13 +9,9 @@ describe('AccountModel', () => {
   });
 
   it('should create an account', async () => {
-    const { AccountModel } = await database();
+    const account = await CreateAccount();
 
-    const account = await AccountModel.create({
-      id: 'hello'
-    });
-
-    expect(account.id).to.equal('hello');
+    expect(account.id).exists();
     expect(account.updated_at).to.be.an.instanceOf(Date);
     expect(account.created_at).to.be.an.instanceOf(Date);
   });

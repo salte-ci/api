@@ -3,6 +3,8 @@ import { LinkedAccountModel } from './linked-account';
 import { EnvironmentVariableModel } from './environment-variable';
 import { RepoModel } from './repo';
 
+export const PROVIDER_TYPES = ['bitbucket', 'github', 'gitlab'];
+
 @Table({
   modelName: 'provider',
   defaultScope: {
@@ -61,7 +63,7 @@ export class ProviderModel extends Model<ProviderModel> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: ['bitbucket', 'github', 'gitlab']
+    values: PROVIDER_TYPES
   })
   type: string;
 

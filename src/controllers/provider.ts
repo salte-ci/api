@@ -23,6 +23,6 @@ export class ProviderController {
 
     const providers = await ProviderModel.scope('admin').findAll();
 
-    return res.status(200).json(providers);
+    return res.status(200).send(providers);
   }
 }

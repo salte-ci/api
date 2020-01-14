@@ -6,7 +6,7 @@ export class HealthController {
 
   @Get('/')
   public async get(req: Request, res: Response): Promise<any> {
-    return res.status(200).json({
+    return res.status(200).send({
       status: 'ok'
     });
   }

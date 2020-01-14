@@ -5,28 +5,24 @@ import * as request from 'supertest';
 import { database } from '../models/database';
 import * as Auth from '../utils/auth';
 import { ExpressServer } from '../server';
+import { CreateProvider } from '../utils/test/mock';
 
 describe('ProviderController', () => {
   const { server } = new ExpressServer();
   let provider: any;
 
   beforeEach(async () => {
-    const { ProviderModel, sequelize } = await database();
+    const { sequelize } = await database();
     await sequelize.sync({ force: true });
 
-    provider = await ProviderModel.create({
-      name: 'enterprise-github',
-      friendly_name: 'Enterprise GitHub',
-      type: 'github',
-      url: 'https://github.com',
-      api_url: 'https://api.github.com',
-      client_id: 'client_id',
-      client_secret: 'client_secret'
-    });
+    provider = await CreateProvider();
   });
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  after(() => {
     server.close();
   });
 
@@ -41,13 +37,13 @@ describe('ProviderController', () => {
 
       expect(body).equals([{
         id: provider.id,
-        name: 'enterprise-github',
-        friendly_name: 'Enterprise GitHub',
-        type: 'github',
-        url: 'https://github.com',
-        api_url: 'https://api.github.com',
-        client_id: 'client_id',
-        client_secret: 'client_secret',
+        name: provider.name,
+        friendly_name: provider.friendly_name,
+        type: provider.type,
+        url: provider.url,
+        api_url: provider.api_url,
+        client_id: provider.client_id,
+        client_secret: provider.client_secret,
         created_at: provider.created_at.toISOString(),
         updated_at: provider.updated_at.toISOString()
       }]);

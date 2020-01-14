@@ -10,9 +10,7 @@ describe('Fetch', () => {
     });
 
     it('should support errors', async () => {
-      const error = await fetch('http://localhost').catch((error) => error);
-
-      expect(error.message).to.equal('request to http://localhost/ failed, reason: connect ECONNREFUSED 127.0.0.1:80');
+      await expect(fetch('http://localhost')).rejects(Error, 'request to http://localhost/ failed, reason: connect ECONNREFUSED 127.0.0.1:80');
     }).timeout(5000);
   });
 });

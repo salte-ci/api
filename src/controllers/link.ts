@@ -41,10 +41,10 @@ export class LinkController {
         status: 404
       });
 
-      return res.status(200).json(link);
+      return res.status(200).send(link);
     }
 
-    return res.status(200).json(await LinkedAccountModel.findAll({
+    return res.status(200).send(await LinkedAccountModel.findAll({
       where: {
         account_id: req.auth.sub
       }
@@ -117,6 +117,6 @@ export class LinkController {
       }
     });
 
-    return res.status(200).json(link);
+    return res.status(200).send(link);
   }
 }

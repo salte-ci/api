@@ -9,6 +9,9 @@ describe('HealthController', () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  after(() => {
     server.close();
   });
 

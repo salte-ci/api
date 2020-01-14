@@ -1,5 +1,6 @@
 import { expect } from '@hapi/code';
 import { database } from './database';
+import { chance, CreateAccount, CreateBot } from '../utils/test/mock';
 
 describe('BotModel', () => {
   beforeEach(async () => {
@@ -8,32 +9,24 @@ describe('BotModel', () => {
   });
 
   it('should create a bot account', async () => {
-    const { AccountModel, BotModel } = await database();
+    const account = await CreateAccount();
 
-    const account = await AccountModel.create({
-      id: '12345'
+    const bot = await CreateBot({
+      id: account.id
     });
 
-    const bot = await BotModel.create({
-      id: account.id,
-      api_key: '54321'
-    });
-
-    expect(bot.id).to.equal('12345');
-    expect(bot.api_key).to.equal('54321');
+    expect(bot.id).to.equal(account.id);
+    expect(bot.api_key).exists();
     expect(bot.updated_at).to.be.an.instanceOf(Date);
     expect(bot.created_at).to.be.an.instanceOf(Date);
   });
 
   it('should ensure that an account exists for a given bot user', async () => {
-    const { BotModel } = await database();
-
-    const error = await BotModel.create({
-      id: '12345',
+    const promise = CreateBot({
+      id: chance.string(),
       api_key: '54321'
-    }).catch((error: Error) => error);
+    });
 
-    expect(error).to.be.an.instanceOf(Error);
-    expect(error.message).to.equal('SQLITE_CONSTRAINT: FOREIGN KEY constraint failed');
+    await expect(promise).rejects(Error, 'SQLITE_CONSTRAINT: FOREIGN KEY constraint failed');
   });
 });
