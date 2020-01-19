@@ -2,15 +2,18 @@ import { Sequelize } from 'sequelize-typescript';
 import { config } from '../shared/config';
 import { logger } from '../shared/logger';
 import { CreateDatabase } from '../utils/sequelize';
+import { Base64 } from '../utils/convert';
 
 import { AccountModel } from './account';
 import { BotModel } from './bot';
 import { BuildModel } from './build';
 import { EnvironmentVariableModel } from './environment-variable';
+import { InstallationModel } from './installation';
 import { LinkedAccountModel } from './linked-account';
 import { ProviderModel } from './provider';
 import { RunnerModel } from './runner';
-import { RepoModel } from './repo';
+import { OrganizationModel } from './organization';
+import { RepositoryModel } from './repository';
 import { UserModel } from './user';
 
 const sequelize = new Sequelize(`${config.DATABASE_URL}/${config.DATABASE_NAME}`, {
@@ -28,10 +31,12 @@ sequelize.addModels([
   BotModel,
   BuildModel,
   EnvironmentVariableModel,
+  InstallationModel,
   LinkedAccountModel,
   ProviderModel,
   RunnerModel,
-  RepoModel,
+  OrganizationModel,
+  RepositoryModel,
   UserModel
 ]);
 
@@ -44,13 +49,15 @@ export async function database() {
 
     for (const provider of config.DEFAULT_PROVIDERS) {
       await ProviderModel.upsert({
+        app_id: provider.app_id,
         name: provider.name,
         friendly_name: provider.friendly_name,
         type: provider.type,
         url: provider.url,
         api_url: provider.api_url,
         client_id: provider.client_id,
-        client_secret: provider.client_secret
+        client_secret: provider.client_secret,
+        private_key: Base64.decode(provider.private_key)
       });
     }
 
@@ -63,10 +70,26 @@ export async function database() {
     BotModel,
     BuildModel,
     EnvironmentVariableModel,
+    InstallationModel,
     LinkedAccountModel,
     ProviderModel,
     RunnerModel,
-    RepoModel,
+    OrganizationModel,
+    RepositoryModel,
     UserModel
   };
 }
+
+export {
+  AccountModel,
+  BotModel,
+  BuildModel,
+  EnvironmentVariableModel,
+  InstallationModel,
+  LinkedAccountModel,
+  ProviderModel,
+  RunnerModel,
+  OrganizationModel,
+  RepositoryModel,
+  UserModel
+};

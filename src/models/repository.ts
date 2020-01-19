@@ -1,10 +1,11 @@
 import { Table, Column, ForeignKey, BelongsTo, Model, DataType, HasMany } from 'sequelize-typescript';
 import { ProviderModel } from './provider';
 import { BuildModel } from './build';
+import { OrganizationModel } from './organization';
 
-@Table({ modelName: 'repo' })
-export class RepoModel extends Model<RepoModel> {
-  @HasMany(() => BuildModel, 'repo_id')
+@Table({ modelName: 'repository' })
+export class RepositoryModel extends Model<RepositoryModel> {
+  @HasMany(() => BuildModel, 'repository_id')
   builds: BuildModel[];
 
   @Column({
@@ -23,7 +24,7 @@ export class RepoModel extends Model<RepoModel> {
   provider_id: number;
 
   @BelongsTo(() => ProviderModel)
-  providers: ProviderModel;
+  provider: ProviderModel;
 
   @Column({
     type: DataType.STRING,
@@ -37,4 +38,14 @@ export class RepoModel extends Model<RepoModel> {
     allowNull: false
   })
   private: boolean;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false
+  })
+  @ForeignKey(() => OrganizationModel)
+  organization_id: string;
+
+  @BelongsTo(() => OrganizationModel)
+  organizations: OrganizationModel;
 }

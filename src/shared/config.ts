@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { safeReadFileSync } from '../utils/fs';
 
 export interface DefaultProviderConfig {
+  app_id: number;
   name: string;
   friendly_name: string;
   type: string;
@@ -9,10 +10,13 @@ export interface DefaultProviderConfig {
   api_url: string;
   client_id: string;
   client_secret: string;
+  private_key: string;
 };
 
 export interface Config {
   [key: string]: any;
+
+  URL: string;
 
   DATABASE_URL: string;
 
@@ -38,6 +42,10 @@ export interface Config {
   VERSION: string;
 };
 
+export interface ComputedConfig {
+  name: string;
+};
+
 export function env(name: string, defaultValue?: any): any {
   const value = process.env[name.toUpperCase()] ||
     safeReadFileSync(`/run/secrets/${name.toLowerCase()}`, 'utf8') ||
@@ -56,7 +64,12 @@ export function env(name: string, defaultValue?: any): any {
 
 export const ENVIRONMENT = env('ENVIRONMENT', 'local');
 
+export const computed: ComputedConfig = {
+  name: ENVIRONMENT === 'live' ? 'salte-ci' : `salte-ci-${ENVIRONMENT}`
+};
+
 export const config: Config = {
+  URL: env('URL', 'http://localhost:8080'),
   DATABASE_URL: env('DATABASE_URL', 'sqlite://:memory'),
   DATABASE_NAME: env('DATABASE_NAME', `salte-ci-${ENVIRONMENT}`),
   JWKS_URL: env('JWKS_URL', 'https://salte.auth0.com/.well-known/jwks.json'),

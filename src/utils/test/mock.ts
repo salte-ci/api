@@ -40,6 +40,8 @@ export async function CreateProvider(overrides?: Overrides) {
   const { ProviderModel } = await database();
 
   return ProviderModel.create({
+    app_id: chance.string(),
+    private_key: chance.string(),
     client_id: chance.string(),
     client_secret: chance.string(),
     name: chance.string({ alpha: true }),
@@ -51,10 +53,18 @@ export async function CreateProvider(overrides?: Overrides) {
   });
 }
 
-export async function CreateRepo(overrides?: Overrides) {
-  const { RepoModel } = await database();
+export async function CreateOrganization(overrides?: Overrides) {
+  const { OrganizationModel } = await database();
 
-  return RepoModel.create({
+  return OrganizationModel.create({
+    ...overrides
+  });
+}
+
+export async function CreateRepository(overrides?: Overrides) {
+  const { RepositoryModel } = await database();
+
+  return RepositoryModel.create({
     slug: chance.string(),
     private: chance.bool(),
     ...overrides,

@@ -22,13 +22,15 @@ describe('ProviderModel', () => {
     expect(provider.created_at).to.be.an.instanceOf(Date);
   });
 
-  it('should throw an error if a client_id, client_secret, name, friendly_name, type, url, or api_url are not provided', async () => {
+  it('should throw an error if a app_id, client_id, client_secret, private_key, name, friendly_name, type, url, or api_url are not provided', async () => {
     const { ProviderModel } = await database();
     const promise = ProviderModel.create();
 
     await expect(promise).rejects(Error, outdent`
+      notNull Violation: provider.app_id cannot be null,
       notNull Violation: provider.client_id cannot be null,
       notNull Violation: provider.client_secret cannot be null,
+      notNull Violation: provider.private_key cannot be null,
       notNull Violation: provider.name cannot be null,
       notNull Violation: provider.friendly_name cannot be null,
       notNull Violation: provider.type cannot be null,

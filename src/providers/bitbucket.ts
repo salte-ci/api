@@ -20,7 +20,7 @@ export class BitbucketProvider extends Provider {
     });
   }
 
-  static async token(options: Provider.TokenOptions): Promise<Provider.TokenResponse> {
+  static async token(options: Provider.UserTokenOptions | Provider.AppTokenOptions): Promise<Provider.TokenResponse> {
     const response = await request.post(`${options.url}/site/oauth2/access_token`)
       .type('form')
       .set('Authorization', `Basic ${Base64.encode(`${options.client_id}:${options.client_secret}`)}`)
